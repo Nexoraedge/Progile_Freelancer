@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar'
 import Pricing from '@/components/Pricing'
 import React from 'react'
 import Testimonials from '@/components/Testimonials'
+import Footer from '@/components/Footer'
 
 const page = () => {
   return (
@@ -17,6 +18,7 @@ const page = () => {
     <Benefits />
     <Pricing />
     <Testimonials />
+    <Footer />
     </>
   )
 }

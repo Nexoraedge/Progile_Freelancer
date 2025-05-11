@@ -9,7 +9,7 @@ export default function CtaSection() {
       <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-purple-500/5 rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-cyan-500/5 rounded-full blur-3xl" />
 
-      <div className="mx-2 sm:mx-4 md:mx-3 lg:mx-10 relative z-10">
+      <div className="mx-5 md:mx-3 lg:mx-10 relative z-10">
         <div className="max-w-4xl mx-auto bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-8 md:p-12 shadow-2xl">
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-cyan-200">

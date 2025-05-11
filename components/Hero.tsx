@@ -8,7 +8,7 @@ export default function HeroSection() {
 
   return (
     <section className="relative pt-30 pb-20  container mx-auto overflow-hidden">
-      <div className="xl:mx-10  mx-5 relative z-10">
+      <div className="xl:mx-10  mx-6 relative z-10">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-8 text-center md:text-left">
             <div className="space-y-4 max-w-xl mx-auto md:mx-0" data-aos="fade-up" data-aos-delay="100">

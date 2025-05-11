@@ -23,7 +23,7 @@ export default function Testimonials() {
     <section id="testimonials" className="py-20 container mx-auto relative">
       <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 to-cyan-900/10" />
 
-      <div className="mx-5 md:mx-3 lg:mx-10 relative z-10">
+      <div className="mx-2 md:mx-3 lg:mx-10 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-block rounded-lg bg-cyan-500/10 border border-cyan-500/20 px-3 py-1 text-sm text-cyan-400 mb-4">
             Testimonials
