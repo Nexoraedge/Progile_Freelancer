@@ -195,7 +195,7 @@ export const testimonials = [
     id: 1,
     name: "Sarah Johnson",
     role: "UX/UI Designer",
-    avatar: "/placeholder.svg?height=80&width=80",
+    avatar: "/profile/pro1.jpg",
     content:
       "Freelancer Profile Launcher transformed my freelance business. I was struggling to get noticed on Upwork, but after optimizing my profile with this tool, I started receiving inquiries within days. The platform-specific optimization is truly game-changing!",
     rating: 5,
@@ -204,7 +204,7 @@ export const testimonials = [
     id: 2,
     name: "Michael Chen",
     role: "Full-Stack Developer",
-    avatar: "/placeholder.svg?height=80&width=80",
+    avatar: "/profile/pro2.png",
     content:
       "As someone who works across multiple freelance platforms, keeping my profiles consistent and optimized was a nightmare. This tool saved me countless hours and helped me land higher-quality clients. The AI-generated content is surprisingly good and sounds like me!",
     rating: 5,
@@ -213,7 +213,7 @@ export const testimonials = [
     id: 3,
     name: "Jessica Williams",
     role: "Content Writer",
-    avatar: "/placeholder.svg?height=80&width=80",
+    avatar: "/profile/pro3.png",
     content:
       "I was skeptical at first, but the results speak for themselves. My Fiverr gigs are ranking higher, and I've seen a 40% increase in client messages. The platform understands the nuances of different freelance marketplaces and tailors content perfectly for each one. Worth every penny!",
     rating: 5,
@@ -222,7 +222,7 @@ export const testimonials = [
     id: 4,
     name: "David Rodriguez",
     role: "Video Editor",
-    avatar: "/placeholder.svg?height=80&width=80",
+    avatar: "/profile/pro4.jpg",
     content:
       "I've tried several profile optimization tools, but none compare to Freelancer Profile Launcher. The ability to generate platform-specific content from a single source profile is brilliant. My Upwork JSS score improved by 15% within two months of using this tool.",
     rating: 4,
@@ -231,7 +231,7 @@ export const testimonials = [
     id: 5,
     name: "Emma Thompson",
     role: "Digital Marketer",
-    avatar: "/placeholder.svg?height=80&width=80",
+    avatar: "/profile/avatar.jpg",
     content:
       "This tool helped me break into the top-rated seller category on Fiverr much faster than I expected. The keyword optimization is spot-on, and the proposal templates have significantly improved my response rate. Highly recommended for serious freelancers!",
     rating: 5,
