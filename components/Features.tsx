@@ -6,7 +6,7 @@ export default function Features() {
     <section id="features" className="py-20 container mx-auto relative">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2/3 h-2/3 bg-gradient-to-br from-purple-500/5 to-cyan-500/5 rounded-full blur-3xl" />
 
-      <div className=" relative mx-3 sm:mx-4 md:mx-3 lg:mx-10 z-10">
+      <div className=" relative mx-5 md:mx-3 lg:mx-10 z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-block rounded-lg bg-purple-500/10 border border-purple-500/20 px-3 py-1 text-sm text-purple-400 mb-4">
             Powerful Features

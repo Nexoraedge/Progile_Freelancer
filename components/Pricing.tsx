@@ -9,7 +9,7 @@ export default function Pricing() {
       <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-b from-slate-900 to-transparent" />
       <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-slate-900 to-transparent" />
 
-      <div className="mx-2 sm:mx-4 md:mx-3 lg:mx-10 relative z-10">
+      <div className="mx-5 md:mx-3 lg:mx-10 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-block rounded-lg bg-purple-500/10 border border-purple-500/20 px-3 py-1 text-sm text-purple-400 mb-4">
             Simple Pricing

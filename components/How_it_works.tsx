@@ -14,7 +14,7 @@ export default function HowItWorks() {
       <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-purple-500/10 rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-cyan-500/10 rounded-full blur-3xl" />
 
-      <div className="mx-2 sm:mx-4 md:mx-1 lg:mx-10  relative z-10">
+      <div className="mx-5 sm:mx-6 md:mx-1 lg:mx-10  relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
           <p className="text-slate-400 text-lg">
