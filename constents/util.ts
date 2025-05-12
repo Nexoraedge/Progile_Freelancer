@@ -1,4 +1,5 @@
-import { Award, BarChart3, Clock, FileText, Layers, Library, Repeat, Rocket, Sparkles, Target, ThumbsUp, UserCircle, Users, Zap } from "lucide-react";
+import { Settings2 } from "lucide-react";
+import { Award, BarChart3, Clock, Download, FileInput, FileOutput, FileText, Home, Layers, Library, Repeat, Rocket , Sparkles, Target, ThumbsUp, UserCircle, Users, Zap } from "lucide-react";
 
 export const steps = [
   {
@@ -236,4 +237,12 @@ export const testimonials = [
       "This tool helped me break into the top-rated seller category on Fiverr much faster than I expected. The keyword optimization is spot-on, and the proposal templates have significantly improved my response rate. Highly recommended for serious freelancers!",
     rating: 5,
   },
+]
+
+export const navigation = [
+  { name: "Dashboard", href: "/dashboard", icon: Home },
+  { name: "Profile Input", href: "/profile-input", icon: FileInput },
+  { name: "Generated Content", href: "/generated-content", icon: FileOutput },
+  { name: "Export Center", href: "/export-center", icon: Download },
+  { name: "Settings", href: "/settings", icon: Settings2 },
 ]

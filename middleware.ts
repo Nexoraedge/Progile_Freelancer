@@ -1,0 +1,15 @@
+// middleware.ts
+import { createClient } from '@/lib/supabase/browser'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+
+export async function middleware(req: NextRequest) {
+  const res = NextResponse.next()
+  const supabase = createClient()
+  await supabase.auth.getSession()
+  return res
+}
+
+export const config = {
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+}
