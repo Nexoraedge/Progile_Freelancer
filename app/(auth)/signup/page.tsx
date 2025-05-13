@@ -22,7 +22,7 @@ export default function SignupPage() {
       setError('')
       const { error } = await supabase.auth.signUp({ email, password , options: { data: { firstName, lastName } } })
       if (error) setError(error.message)
-      else router.replace('/login')
+      else router.push('/login')
       setLoading(false)
     }
     const handleOAuthLogin = async (provider: 'google' | 'github') => {
