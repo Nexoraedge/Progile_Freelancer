@@ -30,7 +30,7 @@ export default function Navbar() {
           <div className="relative w-8 h-8 bg-gradient-to-br from-purple-500 to-cyan-400 rounded-lg flex items-center justify-center">
             <Image src="/logo.jpg" className="rounded-full" alt="Logo" width={100} height={100} />
           </div>
-          
+
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
@@ -49,9 +49,11 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-4">
-          <Button className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white shadow-lg shadow-purple-500/20 transition-all duration-300">
-            Get Started
-          </Button>
+          <Link href="/login">
+            <Button className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white shadow-lg shadow-purple-500/20 transition-all duration-300">
+              Get Started
+            </Button>
+          </Link>
         </div>
       </div>
     </header>

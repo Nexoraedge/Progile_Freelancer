@@ -22,9 +22,19 @@ export default function SignupPage() {
       setError('')
       const { error } = await supabase.auth.signUp({ email, password , options: { data: { firstName, lastName } } })
       if (error) setError(error.message)
-      else router.push('/dashboard')
+      else router.replace('/login')
       setLoading(false)
     }
+    const handleOAuthLogin = async (provider: 'google' | 'github') => {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+        },
+      })
+      if (error) console.error('OAuth error:', error)
+    }
+
   return (
     <div className="flex min-h-screen">
       {/* Branding Panel */}
@@ -182,6 +192,7 @@ export default function SignupPage() {
               <Button onClick={handleSignup} disabled={loading} className="w-full bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white shadow-lg shadow-purple-500/20 transition-all duration-300">
                 {loading ? 'Creating account...' : 'Create Account'}
               </Button>
+              {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
             </div>
 
             <div className="relative">
@@ -194,7 +205,9 @@ export default function SignupPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" className="border-slate-700 hover:bg-slate-800 hover:text-white">
+              <Button
+              onClick={() => handleOAuthLogin('google')}
+              variant="outline" className="border-slate-700 hover:bg-slate-800 hover:text-white">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-2"
@@ -221,7 +234,9 @@ export default function SignupPage() {
                 </svg>
                 Google
               </Button>
-              <Button variant="outline" className="border-slate-700 hover:bg-slate-800 hover:text-white">
+              <Button 
+              onClick={() => handleOAuthLogin('github')}
+              variant="outline" className="border-slate-700 hover:bg-slate-800 hover:text-white">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-2"

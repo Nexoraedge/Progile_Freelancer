@@ -17,10 +17,15 @@ export default function LoginPage() {
   
     const handleLogin = async () => {
       setLoading(true)
+      if (!email || !password || password.length < 8) {
+        setError("Please fill all fields correctly.");
+        setLoading(false);
+        return;
+      }
       setError('')
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) setError(error.message)
-      else router.push('/dashboard')
+      else router.replace('/dashboard')
       setLoading(false)
     }
     const handleOAuthLogin = async (provider: 'google' | 'github') => {
@@ -144,7 +149,7 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Password</Label>
-                  <Link href="/forgot-password" className="text-sm text-purple-400 hover:text-purple-300">
+                  <Link href="/forgotpassword" className="text-sm text-purple-400 hover:text-purple-300">
                     Forgot password?
                   </Link>
                 </div>
