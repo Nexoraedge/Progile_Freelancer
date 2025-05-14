@@ -3,6 +3,7 @@
 
 import { createClient } from '@/lib/supabase/browser'
 import { redirect } from 'next/navigation'
+import { NextResponse } from 'next/server'
 
 export async function signInWithEmail(formData: FormData) {
   const supabase = createClient()
@@ -36,12 +37,13 @@ export async function signInWithProvider(provider: 'google' | 'github') {
   const supabase = createClient()
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
-    options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+    options:{
+      redirectTo : `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
     }
   })
 
   if (error) throw error
-
-  redirect(data.url)
+ 
+  redirect(data.url + "error" + error)
 }
+

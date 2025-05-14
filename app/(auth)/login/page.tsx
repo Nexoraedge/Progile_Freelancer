@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Sparkles } from "lucide-react"
-import { supabase } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { createClient } from "@/lib/supabase/browser"
 
 export default function LoginPage() {
     const router = useRouter()
@@ -14,7 +14,23 @@ export default function LoginPage() {
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
-  
+    
+    const suparbase = createClient()
+    // Check if user is already logged in on page load
+    useEffect(() => {
+      const checkSession = async () => {
+        
+        const { data: { session } , error } = await suparbase.auth.getSession()
+        
+        if (session) {
+          // User is already logged in, redirect to dashboard
+          router.push('/dashboard')
+        }
+      }
+      
+      checkSession()
+    }, [router])
+    
     const handleLogin = async () => {
       setLoading(true)
       if (!email || !password || password.length < 8) {
@@ -23,19 +39,58 @@ export default function LoginPage() {
         return;
       }
       setError('')
-      const { error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) setError(error.message)
-      else router.push('/dashboard')
-      setLoading(false)
-    }
-    const handleOAuthLogin = async (provider: 'google' | 'github') => {
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider,
-          options: {
-            redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
-          },
+      
+      try {
+        const suparbase = createClient()
+        const { data, error } = await suparbase.auth.signInWithPassword({ 
+          email, 
+          password 
         })
-        if (error) console.error('OAuth error:', error)
+        console.log(data + "songpss")
+        if (error) {
+          setError(error.message)
+          setLoading(false)
+          return
+        }
+        
+        if (data.session) {
+          // Redirect to dashboard
+          console.log('Login successful, redirecting to dashboard')
+          router.push('/dashboard')
+          router.refresh() // Force Next.js to refresh the page
+        } else {
+          setError('Login succeeded but no session was created')
+        }
+      } catch (err) {
+        console.error('Login error:', err)
+        setError('An unexpected error occurred')
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    const handleOAuthLogin = async (provider: 'google' | 'github') => {
+        try {
+          const suparbase = createClient()
+          const { data, error } = await suparbase.auth.signInWithOAuth({
+            provider,
+          options:{
+            redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
+          }
+          
+          })
+          console.log(data)
+          console.log(error)
+          console.log(data.url)
+          
+          if (error) {
+            console.error('OAuth error:', error)
+            setError(error.message)
+          }
+        } catch (err) {
+          console.error('OAuth login error:', err)
+          setError('An unexpected error occurred')
+        }
       }
   
   return (
@@ -234,7 +289,7 @@ export default function LoginPage() {
             <div className="text-center">
               <p className="text-sm text-slate-400">
                 Don't have an account?{" "}
-                <Link  href="/signup" className="text-purple-400 hover:text-purple-300">
+                <Link href="/signup" className="text-purple-400 hover:text-purple-300">
                   Sign up
                 </Link>
               </p>
