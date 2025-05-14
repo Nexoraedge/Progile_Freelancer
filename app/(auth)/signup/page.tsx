@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label"
 import { Sparkles, Rocket } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { supabase } from "@/lib/supabase/client"
+import { createClient } from "@/lib/supabase/browser"
+import Image from "next/image"
 
 export default function SignupPage() {
     const router = useRouter()
@@ -16,7 +17,7 @@ export default function SignupPage() {
     const [error, setError] = useState('')
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
-  
+   const supabase = createClient()
     const handleSignup = async () => {
       setLoading(true)
       setError('')
@@ -46,7 +47,9 @@ export default function SignupPage() {
         <div className="relative z-10 max-w-md mx-auto text-center">
           <div className="flex items-center justify-center mb-8">
             <div className="relative w-12 h-12 bg-gradient-to-br from-purple-500 to-cyan-400 rounded-lg flex items-center justify-center">
-              <span className="font-bold text-white text-xl">FPL</span>
+              <Link href="/" >
+              <Image className="rounded-full" src="/logo.jpg" alt="Logo" width={100} height={100} />
+              </Link>
             </div>
           </div>
 
@@ -130,7 +133,9 @@ export default function SignupPage() {
         <div className="w-full max-w-md">
           <div className="flex items-center justify-center lg:hidden mb-8">
             <div className="relative w-12 h-12 bg-gradient-to-br from-purple-500 to-cyan-400 rounded-lg flex items-center justify-center">
-              <span className="font-bold text-white text-xl">FPL</span>
+              <Link href="/" >
+              <Image className="rounded-full" src="/logo.jpg" alt="Logo" width={100} height={100} />
+              </Link>
             </div>
           </div>
 

@@ -7,92 +7,83 @@ import { Sparkles } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/browser"
+import Image from "next/image"
 
 export default function LoginPage() {
-    const router = useRouter()
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState('')
-    
-    const suparbase = createClient()
-    // Check if user is already logged in on page load
-    useEffect(() => {
-      const checkSession = async () => {
-        
-        const { data: { session } , error } = await suparbase.auth.getSession()
-        
-        if (session) {
-          // User is already logged in, redirect to dashboard
-          router.push('/dashboard')
-        }
-      }
-      
-      checkSession()
-    }, [router])
-    
-    const handleLogin = async () => {
-      setLoading(true)
-      if (!email || !password || password.length < 8) {
-        setError("Please fill all fields correctly.");
-        setLoading(false);
-        return;
-      }
-      setError('')
-      
-      try {
-        const suparbase = createClient()
-        const { data, error } = await suparbase.auth.signInWithPassword({ 
-          email, 
-          password 
-        })
-        console.log(data + "songpss")
-        if (error) {
-          setError(error.message)
-          setLoading(false)
-          return
-        }
-        
-        if (data.session) {
-          // Redirect to dashboard
-          console.log('Login successful, redirecting to dashboard')
-          router.push('/dashboard')
-          router.refresh() // Force Next.js to refresh the page
-        } else {
-          setError('Login succeeded but no session was created')
-        }
-      } catch (err) {
-        console.error('Login error:', err)
-        setError('An unexpected error occurred')
-      } finally {
-        setLoading(false)
+  const router = useRouter()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const suparbase = createClient()
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session }, error } = await suparbase.auth.getSession()
+      if (session) {
+        router.push('/dashboard')
       }
     }
-    
-    const handleOAuthLogin = async (provider: 'google' | 'github') => {
-        try {
-          const suparbase = createClient()
-          const { data, error } = await suparbase.auth.signInWithOAuth({
-            provider,
-          options:{
-            redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
-          }
-          
-          })
-          console.log(data)
-          console.log(error)
-          console.log(data.url)
-          
-          if (error) {
-            console.error('OAuth error:', error)
-            setError(error.message)
-          }
-        } catch (err) {
-          console.error('OAuth login error:', err)
-          setError('An unexpected error occurred')
-        }
+    checkSession()
+  }, [router])
+
+  const handleLogin = async () => {
+    setLoading(true)
+    if (!email || !password || password.length < 8) {
+      setError("Please fill all fields correctly.");
+      setLoading(false);
+      return;
+    }
+    setError('')
+    try {
+      const suparbase = createClient()
+      const { data, error } = await suparbase.auth.signInWithPassword({
+        email,
+        password
+      })
+      if (error) {
+        setError(error.message)
+        setLoading(false)
+        return
       }
-  
+
+      if (data.session) {
+        console.log('Login successful, redirecting to dashboard')
+        router.push('/dashboard')
+        router.refresh() // Force Next.js to refresh the page
+      } else {
+        setError('Login succeeded but no session was created')
+      }
+    } catch (err) {
+      console.error('Login error:', err)
+      setError('An unexpected error occurred')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleOAuthLogin = async (provider: 'google' | 'github') => {
+    try {
+      const suparbase = createClient()
+      const { data, error } = await suparbase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
+        }
+
+      })
+
+      if (error) {
+        console.error('OAuth error:', error)
+        setError(error.message)
+      }
+    } catch (err) {
+      console.error('OAuth login error:', err)
+      setError('An unexpected error occurred')
+    }
+  }
+
   return (
     <div className="flex min-h-screen">
       {/* Branding Panel */}
@@ -104,7 +95,9 @@ export default function LoginPage() {
         <div className="relative z-10 max-w-md mx-auto text-center">
           <div className="flex items-center justify-center mb-8">
             <div className="relative w-12 h-12 bg-gradient-to-br from-purple-500 to-cyan-400 rounded-lg flex items-center justify-center">
-              <span className="font-bold text-white text-xl">FPL</span>
+              <Link href="/" >
+              <Image className="rounded-full" src="/logo.jpg" alt="Logo" width={100} height={100} />
+              </Link>
             </div>
           </div>
 
@@ -219,9 +212,9 @@ export default function LoginPage() {
               </div>
 
               <Button
-               onClick={handleLogin}
-               disabled={loading}
-               className="w-full bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white shadow-lg shadow-purple-500/20 transition-all duration-300">
+                onClick={handleLogin}
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white shadow-lg shadow-purple-500/20 transition-all duration-300">
                 {loading ? 'Logging in...' : 'Sign In'}
               </Button>
               {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
@@ -238,8 +231,8 @@ export default function LoginPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <Button
-              onClick={() => handleOAuthLogin("google")}
-              variant="outline" className="border-slate-700 hover:bg-slate-800 hover:text-white">
+                onClick={() => handleOAuthLogin("google")}
+                variant="outline" className="border-slate-700 hover:bg-slate-800 hover:text-white">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-2"
@@ -267,8 +260,8 @@ export default function LoginPage() {
                 Google
               </Button>
               <Button
-              onClick={() => handleOAuthLogin("github")}
-              variant="outline" className="border-slate-700 hover:bg-slate-800 hover:text-white">
+                onClick={() => handleOAuthLogin("github")}
+                variant="outline" className="border-slate-700 hover:bg-slate-800 hover:text-white">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-2"

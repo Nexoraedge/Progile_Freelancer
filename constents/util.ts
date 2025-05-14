@@ -244,5 +244,110 @@ export const navigation = [
   { name: "Profile Input", href: "/profile-input", icon: FileInput },
   { name: "Generated Content", href: "/generated-content", icon: FileOutput },
   { name: "Export Center", href: "/export-center", icon: Download },
-  { name: "Settings", href: "/settings", icon: Settings2 },
+  { name: "Settings", href: "/setting", icon: Settings2 },
+  { name: "Pricing", href: "/pricing", icon: Rocket },
+]
+
+export const plan = [
+  {
+    name: "Free",
+    description: "Perfect for trying out the platform",
+    price: "$0",
+    period: "forever",
+    features: [
+      "1 base profile",
+      "2 platform exports per month",
+      "Basic AI optimization",
+      "Standard templates",
+      "Manual updates",
+      "Community support",
+    ],
+    limitations: [
+      "Advanced AI optimization",
+      "Unlimited platform exports",
+      "Revision history",
+      "Analytics dashboard",
+      "Priority support",
+    ],
+    cta: "Get Started",
+    popular: false,
+    badge: null,
+  },
+  {
+    name: "Pro",
+    description: "Everything you need for freelance success",
+    price: "$12.99",
+    period: "per month",
+    features: [
+      "Unlimited base profiles",
+      "Unlimited platform exports",
+      "Advanced AI optimization",
+      "Premium templates",
+      "One-click updates",
+      "Revision history",
+      "Analytics dashboard",
+      "Priority support",
+      "Custom branding",
+      "Export to PDF/Markdown",
+      "Cover letter generator",
+    ],
+    limitations: [],
+    cta: "Upgrade to Pro",
+    popular: true,
+    badge: "Most Popular",
+  },
+  {
+    name: "Lifetime",
+    description: "One-time payment, lifetime access",
+    price: "$199",
+    period: "one-time payment",
+    features: [
+      "All Pro features",
+      "Lifetime access",
+      "Future updates included",
+      "Early access to new features",
+      "1-on-1 onboarding call",
+      "VIP support",
+      "Unlimited exports",
+      "Advanced analytics",
+      "API access (coming soon)",
+    ],
+    limitations: [],
+    cta: "Get Lifetime Access",
+    popular: false,
+    badge: "Best Value",
+  },
+]
+
+export const faqs = [
+  {
+    question: "What happens when I reach my profile limit?",
+    answer:
+      "On the Free plan, you can create up to 2 platform exports per month. Once you reach this limit, you'll need to wait until the next month or upgrade to the Pro plan for unlimited exports.",
+  },
+  {
+    question: "Can I cancel my subscription anytime?",
+    answer:
+      "Yes, you can cancel your Pro subscription at any time. You'll continue to have access to Pro features until the end of your current billing period.",
+  },
+  {
+    question: "How does the Lifetime plan work?",
+    answer:
+      "The Lifetime plan is a one-time payment that gives you permanent access to all Pro features, plus some exclusive benefits. You'll also receive all future updates to the platform at no additional cost.",
+  },
+  {
+    question: "Is there a free trial for the Pro plan?",
+    answer:
+      "We don't offer a free trial for the Pro plan, but our Free plan allows you to test the core functionality. If you're not satisfied with the Pro plan, we offer a 14-day money-back guarantee.",
+  },
+  {
+    question: "What payment methods do you accept?",
+    answer:
+      "We accept all major credit cards (Visa, Mastercard, American Express) and PayPal. For the Lifetime plan, we also offer payment via bank transfer.",
+  },
+  {
+    question: "Can I upgrade from Pro to Lifetime later?",
+    answer:
+      "Yes, you can upgrade from the Pro plan to the Lifetime plan at any time. We'll even provide a pro-rated discount based on your remaining Pro subscription time.",
+  },
 ]

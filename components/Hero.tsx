@@ -26,7 +26,7 @@ export default function HeroSection() {
               data-aos="fade-up"
               data-aos-delay="200"
             >
-                <Link href="/login">
+                <Link href="/signup">
               <Button
                 size="lg"
                 className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white shadow-lg shadow-purple-500/20 transition-all duration-300 group"

@@ -1,12 +1,8 @@
 // lib/supabase/browser.ts
-'use client'
-
-import { createBrowserClient } from '@supabase/ssr'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import type { Database } from './config'
 
 export const createClient = () => {
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-   
-  )
+  return createClientComponentClient<Database>()
 }
+

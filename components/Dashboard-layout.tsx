@@ -1,8 +1,8 @@
 "use client"
-
-import { useState, type ReactNode } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -14,11 +14,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
-  Home,
-  FileInput,
-  FileOutput,
-  Download,
-  Settings,
   Bell,
   Menu,
   X,
@@ -26,27 +21,79 @@ import {
   LogOut,
   User,
   HelpCircle,
+  Settings,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { navigation } from "@/constents/util"
+import { createClient } from "@/lib/supabase/browser"
+import loadUser from "@/app/actions/Util"
+
+// Add this interface to fix TypeScript errors
+interface UserData {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+}
 
 interface DashboardLayoutProps {
-  children: ReactNode
+  children: React.ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname()
+  const router = useRouter()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [userData, setUserData] = useState<UserData | null>(null)
 
-  const navigation = [
-    { name: "Dashboard", href: "/dashboard", icon: Home },
-    { name: "Profile Input", href: "/profile-input", icon: FileInput },
-    { name: "Generated Content", href: "/generated-content", icon: FileOutput },
-    { name: "Export Center", href: "/export-center", icon: Download },
-    { name: "Settings", href: "/settings", icon: Settings },
-  ]
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const user = await loadUser()
+        if (user) {
+          setUserData(user)
+        } else {
+          // Redirect to login if no user is found
+          router.push('/login')
+        }
+      } catch (error) {
+        console.error('Error loading user:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchUserData()
+  }, [router])
+
+  const handleSignOut = async () => {
+    try {
+      setIsLoading(true)
+      const supabase = createClient()
+      await supabase.auth.signOut()
+      router.push('/login')
+    } catch (error) {
+      console.error('Error signing out:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const firstName = userData?.firstName || "User"
+  const lastName = userData?.lastName || ""
+  const email = userData?.email || "user@example.com"
+  const initials = (firstName?.[0] || "") + (lastName?.[0] || "")
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-950">
+        <div className="animate-pulse text-purple-400">Loading...</div>
+      </div>
+    )
+  }
 
   return (
-    <div className="min-h-screen relative top-0 bg-gradient-to-b overflow-y-auto from-slate-950 to-slate-900 text-slate-100">
+    <div className="flex h-screen bg-slate-950 text-slate-100 overflow-hidden">
       {/* Mobile sidebar backdrop */}
       {isSidebarOpen && (
         <div
@@ -57,26 +104,27 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       )}
 
       {/* Sidebar */}
-      <div
+      <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 bg-slate-900/95 backdrop-blur-sm border-r border-slate-800 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:z-auto",
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full",
+          "fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-800 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:z-auto",
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex sticky top-0 z-50 flex-col min-h-screen">
+        <div className="flex flex-col h-full">
+          {/* Sidebar Header */}
           <div className="flex items-center justify-between p-4 border-b border-slate-800">
             <Link href="/dashboard" className="flex items-center gap-2">
-              <div className="relative w-8 h-8 bg-gradient-to-br from-purple-500 to-cyan-400 rounded-lg flex items-center justify-center">
-                <span className="font-bold text-white">FPL</span>
+              <div className="relative w-8 h-8 bg-gradient-to-br from-purple-500 to-cyan-400 rounded-lg flex items-center justify-center overflow-hidden">
+                <Image src="/logo.jpg" alt="Logo" width={32} height={32} className="rounded-lg" />
               </div>
               <span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-cyan-300">
-                FP Launcher
+                FCL
               </span>
             </Link>
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden"
+              className="lg:hidden text-slate-400 hover:text-white hover:bg-slate-800"
               onClick={() => setIsSidebarOpen(false)}
               aria-label="Close sidebar"
             >
@@ -84,8 +132,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             </Button>
           </div>
 
-          <div className="flex-1 py-6 overflow-y-auto">
-            <nav className="px-4 space-y-1">
+          {/* Navigation */}
+          <nav className="flex-1 py-6 px-4 overflow-y-auto">
+            <div className="space-y-1">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
@@ -94,16 +143,17 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
                     pathname === item.href
                       ? "bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-white"
-                      : "text-slate-400 hover:text-white hover:bg-slate-800/50",
+                      : "text-slate-400 hover:text-white hover:bg-slate-800/50"
                   )}
                 >
-                  <item.icon className="h-5 w-5" />
-                  {item.name}
+                  <item.icon className="h-5 w-5 flex-shrink-0" />
+                  <span>{item.name}</span>
                 </Link>
               ))}
-            </nav>
-          </div>
+            </div>
+          </nav>
 
+          {/* Subscription Info */}
           <div className="p-4 border-t border-slate-800">
             <div className="bg-slate-800/50 rounded-lg p-3">
               <div className="flex items-center gap-3 mb-3">
@@ -123,28 +173,30 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   <div className="text-xs text-slate-400">2/5 profiles used</div>
                 </div>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full border-slate-700 hover:bg-slate-800 hover:text-white text-xs"
-              >
-                Upgrade to Pro
-              </Button>
+              <Link href="/pricing">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white text-xs"
+                >
+                  Upgrade to Pro
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
-      </div>
+      </aside>
 
       {/* Main content */}
-      <div className="flex-1 absolute top-0  flex flex-col min-h-screen lg:pl-64">
+      <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
         {/* Top navigation */}
-        <header className="sticky top-0 z-30 bg-slate-900/80 backdrop-blur-sm border-b border-slate-800">
+        <header className="sticky top-0 z-30 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800 shadow-md">
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
                 size="icon"
-                className="lg:hidden"
+                className="lg:hidden text-slate-400 hover:text-white hover:bg-slate-800"
                 onClick={() => setIsSidebarOpen(true)}
                 aria-label="Open sidebar"
               >
@@ -154,20 +206,25 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
 
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" className="rounded-full" aria-label="Notifications">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full text-slate-400 hover:text-white hover:bg-slate-800"
+                aria-label="Notifications"
+              >
                 <Bell className="h-5 w-5" />
               </Button>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center gap-2 hover:bg-slate-800/50">
-                    <Avatar className="h-8 w-8">
+                  <Button variant="ghost" className="flex items-center gap-2 hover:bg-slate-800/50 px-2">
+                    <Avatar className="h-8 w-8 border border-slate-700">
                       <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-                      <AvatarFallback className="bg-slate-700 text-slate-200">JD</AvatarFallback>
+                      <AvatarFallback className="bg-slate-700 text-slate-200">{initials}</AvatarFallback>
                     </Avatar>
                     <div className="hidden md:block text-sm font-medium text-left">
-                      <div>John Doe</div>
-                      <div className="text-xs text-slate-400">john@example.com</div>
+                      <div>{firstName} {lastName}</div>
+                      <div className="text-xs text-slate-400 truncate max-w-[120px]">{email}</div>
                     </div>
                     <ChevronDown className="h-4 w-4 text-slate-400" />
                   </Button>
@@ -179,7 +236,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="hover:bg-slate-700 focus:bg-slate-700 cursor-pointer">
+                  <DropdownMenuItem onClick={() => router.push('/setting')} className="hover:bg-slate-700 focus:bg-slate-700 cursor-pointer">
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Settings</span>
                   </DropdownMenuItem>
@@ -188,7 +245,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     <span>Help & Support</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-slate-700" />
-                  <DropdownMenuItem className="hover:bg-slate-700 focus:bg-slate-700 cursor-pointer text-red-400">
+                  <DropdownMenuItem
+                    onClick={handleSignOut}
+                    className="hover:bg-slate-700 focus:bg-slate-700 cursor-pointer text-red-400"
+                  >
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Log out</span>
                   </DropdownMenuItem>
@@ -199,7 +259,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 bg-gradient-to-b from-slate-950 to-slate-900">
+          {children}
+        </main>
       </div>
     </div>
   )
