@@ -1,4 +1,4 @@
-import { benefits } from "@/constents/util"
+import { benefits } from "@/constants/util"
 
 
 export default function Benefits() {

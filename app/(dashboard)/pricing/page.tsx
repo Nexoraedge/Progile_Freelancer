@@ -3,8 +3,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge"
 import { Check, X, Sparkles, Zap, Shield, Clock, Users, BarChart3 } from "lucide-react"
 import DashboardLayout from "@/components/Dashboard-layout"
-import { faqs } from "@/constents/util"
-import { plan as plans } from "@/constents/util"
+import { faqs } from "@/constants/util"
+import { plan as plans } from "@/constants/util"
 
 
 

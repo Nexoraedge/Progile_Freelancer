@@ -24,7 +24,7 @@ import {
   Settings,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { navigation } from "@/constents/util"
+import { navigation } from "@/constants/util"
 import { createClient } from "@/lib/supabase/browser"
 import loadUser from "@/app/actions/Util"
 

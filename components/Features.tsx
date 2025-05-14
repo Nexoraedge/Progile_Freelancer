@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils"
-import { features } from "@/constents/util"
+import { features } from "@/constants/util"
 
 export default function Features() {
   return (

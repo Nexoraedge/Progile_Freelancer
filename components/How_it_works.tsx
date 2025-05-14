@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { steps } from "@/constents/util"
+import { steps } from "@/constants/util"
 
 export default function HowItWorks() {
   const [activeStep, setActiveStep] = useState(1)

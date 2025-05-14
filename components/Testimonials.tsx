@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight, Star } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
 
-import { testimonials } from "@/constents/util"
+import { testimonials } from "@/constants/util"
 
 export default function Testimonials() {
   const [activeIndex, setActiveIndex] = useState(0)

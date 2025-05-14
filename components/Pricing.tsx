@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Check, X } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { plans } from "@/constents/util"
+import { plans } from "@/constants/util"
 
 export default function Pricing() {
   return (
