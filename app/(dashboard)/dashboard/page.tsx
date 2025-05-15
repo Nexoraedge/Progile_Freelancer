@@ -24,15 +24,17 @@ export default function DashboardPage() {
     })
   }, [])
   
-  const FirstName = userData?.firstName
-  const LastName = userData?.lastName
-  const Email = userData?.email
+  
+  const fullName = userData?.full_name || userData?.firstName + " " + userData?.lastName
+  
+  
+  
   return (
     <DashboardLayout >
       <div className="p-6 w-full">
         {/* Welcome section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Welcome back , {FirstName} {LastName} 👋</h1>
+          <h1 className="text-3xl font-bold mb-2">Welcome back , {fullName} 👋</h1>
           <p className="text-slate-400">Let's launch your freelance profile and win more clients.</p>
         </div>
 

@@ -68,9 +68,9 @@ export default function LoginPage() {
       const suparbase = createClient()
       const { data, error } = await suparbase.auth.signInWithOAuth({
         provider,
-        options: {
-          redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
-        }
+      options:{
+        redirectTo : `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
+      }
 
       })
 

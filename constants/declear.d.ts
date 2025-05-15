@@ -4,9 +4,11 @@ interface DashboardLayoutProps {
 
 interface UserData {
     id: string
-    email: string
-    firstName: string
-    lastName: string
+    email?: string
+    firstName?: string
+    lastName?: string
     created_at: string
     updated_at: string
+    full_name?: string
+    avatar_url?: string
 }

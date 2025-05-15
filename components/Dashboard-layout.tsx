@@ -28,12 +28,7 @@ import { navigation } from "@/constants/util"
 import { createClient } from "@/lib/supabase/browser"
 import loadUser from "@/app/actions/Util"
 
-// Add this interface to fix TypeScript errors
-interface UserData {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-}
+
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -79,10 +74,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     }
   }
 
-  const firstName = userData?.firstName || "User"
-  const lastName = userData?.lastName || ""
-  const email = userData?.email || "user@example.com"
-  const initials = (firstName?.[0] || "") + (lastName?.[0] || "")
+  const fullName = userData?.full_name || userData?.firstName + " " + userData?.lastName
+  const email = userData?.email
+  const initials = (fullName?.[0] || "") + (fullName?.split(" ")[1]?.[0] || "")
+  const Avatar_url = userData?.avatar_url;
+  console.log("avatar", Avatar_url);  
+  
 
   if (isLoading) {
     return (
@@ -217,13 +214,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center gap-2 hover:bg-slate-800/50 px-2">
+                <Button variant="ghost" className="flex items-center gap-2 hover:bg-slate-800/50 px-2">
                     <Avatar className="h-8 w-8 border border-slate-700">
-                      <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
+                      <AvatarImage className="rounded-full object-contain`" src={userData?.avatar_url} alt="User" />
                       <AvatarFallback className="bg-slate-700 text-slate-200">{initials}</AvatarFallback>
                     </Avatar>
                     <div className="hidden md:block text-sm font-medium text-left">
-                      <div>{firstName} {lastName}</div>
+                      <div>{userData?.full_name || `${userData?.firstName} ${userData?.lastName}`}</div>
                       <div className="text-xs text-slate-400 truncate max-w-[120px]">{email}</div>
                     </div>
                     <ChevronDown className="h-4 w-4 text-slate-400" />
