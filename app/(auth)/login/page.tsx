@@ -49,8 +49,7 @@ export default function LoginPage() {
       }
 
       if (data.session) {
-        console.log('Login successful, redirecting to dashboard')
-        router.push('/dashboard')
+         router.push('/dashboard')
         router.refresh() // Force Next.js to refresh the page
       } else {
         setError('Login succeeded but no session was created')

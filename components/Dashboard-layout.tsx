@@ -76,9 +76,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const fullName = userData?.full_name || userData?.firstName + " " + userData?.lastName
   const email = userData?.email
-  const initials = (fullName?.[0] || "") + (fullName?.split(" ")[1]?.[0] || "")
-  const Avatar_url = userData?.avatar_url;
-  console.log("avatar", Avatar_url);  
+  const initials = (fullName?.[0] || "") + (fullName?.split(" ")[1]?.[0] || "") 
   
 
   if (isLoading) {
@@ -217,7 +215,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 <Button variant="ghost" className="flex items-center gap-2 hover:bg-slate-800/50 px-2">
                     <Avatar className="h-8 w-8 border border-slate-700">
                       <AvatarImage className="rounded-full object-contain`" src={userData?.avatar_url} alt="User" />
-                      <AvatarFallback className="bg-slate-700 text-slate-200">{initials}</AvatarFallback>
+                      <AvatarFallback className={ "bg-slate-700 text-slate-200"}>{initials}</AvatarFallback>
                     </Avatar>
                     <div className="hidden md:block text-sm font-medium text-left">
                       <div>{userData?.full_name || `${userData?.firstName} ${userData?.lastName}`}</div>
