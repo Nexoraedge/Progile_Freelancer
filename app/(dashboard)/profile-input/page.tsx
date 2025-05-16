@@ -31,14 +31,18 @@ import {
   Sparkles,
 } from "lucide-react"
 import DashboardLayout from "@/components/Dashboard-layout"
-// Sample data for dropdowns and multi-selects
-import { skillOptions , languageOptions , fluencyLevels , serviceCategories } from "@/constants/util"
+// Sample data
+import { skillOptions, languageOptions, fluencyLevels, serviceCategories } from "@/constants/util"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { formSchema } from "@/app/actions/Util"
 
 
 
 
 export default function ProfileInputPage() {
-  
+
   const [selectedSkills, setSelectedSkills] = useState<string[]>([])
   const [newSkill, setNewSkill] = useState("")
   const [selectedLanguages, setSelectedLanguages] = useState<{ language: string; fluency: string }[]>([])
@@ -49,6 +53,41 @@ export default function ProfileInputPage() {
   const [hourlyRate, setHourlyRate] = useState([50])
   const [weeklyHours, setWeeklyHours] = useState([40])
   const [resumeFile, setResumeFile] = useState<File | null>(null)
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    formState: { errors }
+  } = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      role: "",
+      experienceLevel: "Beginner",
+      yearsExperience: "",
+      location: "",
+      professional_summary: "",
+      skills: [],
+      services: [],
+      hourly_rate: 0,
+      weekly_hours: 0,
+      languages: [],
+      fluency: {},
+      communication_style: "",
+      portfolio_url: "",
+      project: {
+        title: "",
+        description: "",
+        url: ""
+      },
+      cv: "",
+      Prefferd_platform: "none",
+      work_preferences: "remote",
+      generate_cover_letter: false,
+      generate_proposal_template: false,
+      Optamize_for_platform_Seo: false
+    }
+  });
 
   // Handlers for form inputs
   const addSkill = () => {
@@ -100,32 +139,36 @@ export default function ProfileInputPage() {
     setResumeFile(null)
   }
 
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    console.log(data)
+  }
+
   return (
     <DashboardLayout>
-      <div className="p-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2 premium-text">Complete Your Freelancer Profile</h1>
-          <p className="text-slate-400">
+      <div className="p-3 sm:p-6">
+        <div className="mb-4 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2 premium-text">Complete Your Freelancer Profile</h1>
+          <p className="text-sm sm:text-base text-slate-400">
             Fill in the details below to generate optimized profiles for multiple freelancing platforms
           </p>
         </div>
 
-        <form className="space-y-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-8">
+        <form className="space-y-4 sm:space-y-8">
+          <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:gap-8 lg:grid-cols-3">
+            <div className="lg:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
               {/* Professional Information */}
               <Card className="premium-card premium-border bg-slate-800/50 border-slate-700">
-                <CardHeader className="relative z-10">
+                <CardHeader className="relative z-10 p-4 sm:p-6">
                   <div className="flex items-center gap-2">
-                    <Briefcase className="h-5 w-5 text-violet-400" />
+                    <Briefcase className="h-4 w-4 sm:h-5 sm:w-5 text-violet-400" />
                     <CardTitle>Professional Information</CardTitle>
                   </div>
                   <CardDescription>Tell clients about your professional background</CardDescription>
                 </CardHeader>
-                <CardContent className="relative z-10 space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <CardContent className="relative z-10 space-y-4 sm:space-y-6 p-4 sm:p-6 pt-0 sm:pt-0">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="role" className="flex items-center gap-1">
+                      <Label htmlFor="role" className="flex items-center gap-1 text-sm">
                         Your Role <span className="text-red-500">*</span>
                         <TooltipProvider>
                           <Tooltip>
@@ -138,15 +181,15 @@ export default function ProfileInputPage() {
                           </Tooltip>
                         </TooltipProvider>
                       </Label>
-                      <Input id="role" placeholder="e.g. Full Stack Developer" className="premium-input" required />
+                      <Input id="role" placeholder={`e.g. Full Stack Developer ${errors.role ? "(required)" : ""}`} className="premium-input text-sm" required {...register("role")} />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="experience-level" className="flex items-center gap-1">
+                      <Label htmlFor="experience-level" className="flex items-center gap-1 text-sm">
                         Experience Level <span className="text-red-500">*</span>
                       </Label>
-                      <Select required>
-                        <SelectTrigger className="premium-input">
-                          <SelectValue placeholder="Select your experience level" />
+                      <Select {...register("experienceLevel")} required>
+                        <SelectTrigger className="premium-input text-sm">
+                          <SelectValue placeholder={`Select your experience level ${errors.experienceLevel ? "(required)" : ""}`} />
                         </SelectTrigger>
                         <SelectContent className="bg-slate-800 border-slate-700">
                           <SelectItem value="beginner">Beginner (0-2 years)</SelectItem>
@@ -157,14 +200,14 @@ export default function ProfileInputPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="years-experience" className="flex items-center gap-1">
+                      <Label htmlFor="years-experience" className="flex items-center gap-1 text-sm">
                         Years of Experience <span className="text-red-500">*</span>
                       </Label>
-                      <Select required>
-                        <SelectTrigger className="premium-input">
-                          <SelectValue placeholder="Select years of experience" />
+                      <Select {...register("yearsExperience")} required>
+                        <SelectTrigger className="premium-input text-sm">
+                          <SelectValue placeholder={`Select years of experience ${errors.yearsExperience ? "(required)" : ""}`} />
                         </SelectTrigger>
                         <SelectContent className="bg-slate-800 border-slate-700">
                           {Array.from({ length: 20 }, (_, i) => (
@@ -177,18 +220,18 @@ export default function ProfileInputPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="location" className="flex items-center gap-1">
+                      <Label htmlFor="location" className="flex items-center gap-1 text-sm">
                         Location
                       </Label>
-                      <Input id="location" placeholder="e.g. New York, USA" className="premium-input" />
+                      <Input {...register("location")} id="location" placeholder={`e.g. Jaipur, India`} className="premium-input text-sm" />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="professional-summary" className="flex items-center gap-1">
+                    <Label htmlFor="professional-summary" className="flex items-center gap-1 text-sm">
                       Professional Summary <span className="text-red-500">*</span>
-                      <TooltipProvider>
-                        <Tooltip>
+                      <TooltipProvider >
+                        <Tooltip >
                           <TooltipTrigger asChild>
                             <Info className="h-3.5 w-3.5 text-slate-400 cursor-help ml-1" />
                           </TooltipTrigger>
@@ -201,9 +244,10 @@ export default function ProfileInputPage() {
                       </TooltipProvider>
                     </Label>
                     <Textarea
+                      {...register("professional_summary")}
                       id="professional-summary"
-                      placeholder="Write a brief summary about your professional background, expertise, and what makes you stand out..."
-                      className="min-h-32 premium-input"
+                      placeholder={`Write a brief summary about your professional background, expertise, and what makes you stand out... ${errors.professional_summary ? "(required)" : ""}`}
+                      className="min-h-20 sm:min-h-32 premium-input text-sm"
                       required
                     />
                     <p className="text-xs text-slate-500">
@@ -216,23 +260,23 @@ export default function ProfileInputPage() {
 
               {/* Skills & Services */}
               <Card className="premium-card premium-border bg-slate-800/50 border-slate-700">
-                <CardHeader className="relative z-10">
+                <CardHeader className="relative z-10 p-4 sm:p-6">
                   <div className="flex items-center gap-2">
-                    <Code className="h-5 w-5 text-violet-400" />
+                    <Code className="h-4 w-4 sm:h-5 sm:w-5 text-violet-400" />
                     <CardTitle>Skills & Services</CardTitle>
                   </div>
                   <CardDescription>Showcase your technical skills and service offerings</CardDescription>
                 </CardHeader>
-                <CardContent className="relative z-10 space-y-6">
+                <CardContent className="relative z-10 space-y-4 sm:space-y-6 p-4 sm:p-6 pt-0 sm:pt-0">
                   <div className="space-y-2">
-                    <Label htmlFor="skills" className="flex items-center gap-1">
+                    <Label htmlFor="skills" className="flex items-center gap-1 text-sm">
                       Skills / Tech Stack <span className="text-red-500">*</span>
                     </Label>
                     <div className="flex flex-wrap gap-2 mb-3">
                       {selectedSkills.map((skill) => (
                         <Badge
                           key={skill}
-                          className="bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border-purple-500/30 px-3 py-1 flex items-center gap-1"
+                          className="bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border-purple-500/30 px-2 py-1 text-xs sm:px-3 sm:py-1 flex items-center gap-1"
                         >
                           {skill}
                           <button type="button" className="ml-1 hover:text-white" onClick={() => removeSkill(skill)}>
@@ -241,12 +285,12 @@ export default function ProfileInputPage() {
                         </Badge>
                       ))}
                     </div>
-                    <div className="flex gap-2">
-                      <Select onValueChange={setNewSkill}>
-                        <SelectTrigger className="premium-input flex-1">
-                          <SelectValue placeholder="Select or type a skill" />
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Select {...register("skills")} onValueChange={setNewSkill}>
+                        <SelectTrigger className="premium-input text-sm">
+                          <SelectValue placeholder={`Select or type a skill ${errors.skills ? "(required)" : ""}`} />
                         </SelectTrigger>
-                        <SelectContent className="bg-slate-800 border-slate-700 max-h-[300px]">
+                        <SelectContent className="bg-slate-800 border-slate-700 max-h-64">
                           {skillOptions.map((skill) => (
                             <SelectItem key={skill} value={skill}>
                               {skill}
@@ -262,14 +306,14 @@ export default function ProfileInputPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="services" className="flex items-center gap-1">
+                    <Label htmlFor="services" className="flex items-center gap-1 text-sm">
                       Services Offered <span className="text-red-500">*</span>
                     </Label>
                     <div className="flex flex-wrap gap-2 mb-3">
                       {services.map((service) => (
                         <Badge
                           key={service}
-                          className="bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border-cyan-500/30 px-3 py-1 flex items-center gap-1"
+                          className="bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border-cyan-500/30 px-2 py-1 text-xs sm:px-3 sm:py-1 flex items-center gap-1"
                         >
                           {service}
                           <button
@@ -282,12 +326,12 @@ export default function ProfileInputPage() {
                         </Badge>
                       ))}
                     </div>
-                    <div className="flex gap-2">
-                      <Select onValueChange={setNewService}>
-                        <SelectTrigger className="premium-input flex-1">
-                          <SelectValue placeholder="Select or type a service" />
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Select {...register("services")} onValueChange={setNewService}>
+                        <SelectTrigger className="premium-input text-sm">
+                          <SelectValue placeholder={`Select or type a service ${errors.services ? "(required)" : ""}`} />
                         </SelectTrigger>
-                        <SelectContent className="bg-slate-800 border-slate-700 max-h-[300px]">
+                        <SelectContent className="bg-slate-800 border-slate-700 max-h-64">
                           {serviceCategories.map((service) => (
                             <SelectItem key={service} value={service}>
                               {service}
@@ -311,23 +355,23 @@ export default function ProfileInputPage() {
 
               {/* Communication */}
               <Card className="premium-card premium-border bg-slate-800/50 border-slate-700">
-                <CardHeader className="relative z-10">
+                <CardHeader className="relative z-10 p-4 sm:p-6">
                   <div className="flex items-center gap-2">
-                    <Languages className="h-5 w-5 text-violet-400" />
+                    <Languages className="h-4 w-4 sm:h-5 sm:w-5 text-violet-400" />
                     <CardTitle>Communication</CardTitle>
                   </div>
                   <CardDescription>Languages you speak and communication preferences</CardDescription>
                 </CardHeader>
-                <CardContent className="relative z-10 space-y-6">
+                <CardContent className="relative z-10 space-y-4 sm:space-y-6 p-4 sm:p-6 pt-0 sm:pt-0">
                   <div className="space-y-2">
-                    <Label htmlFor="languages" className="flex items-center gap-1">
+                    <Label htmlFor="languages" className="flex items-center gap-1 text-sm">
                       Languages You Speak <span className="text-red-500">*</span>
                     </Label>
                     <div className="flex flex-wrap gap-2 mb-3">
                       {selectedLanguages.map((lang) => (
                         <Badge
                           key={lang.language}
-                          className="bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border-indigo-500/30 px-3 py-1 flex items-center gap-1"
+                          className="bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border-indigo-500/30 px-2 py-1 text-xs sm:px-3 sm:py-1 flex items-center gap-1"
                         >
                           {lang.language} ({lang.fluency})
                           <button
@@ -340,13 +384,13 @@ export default function ProfileInputPage() {
                         </Badge>
                       ))}
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                      <div className="md:col-span-2">
-                        <Select onValueChange={setNewLanguage}>
-                          <SelectTrigger className="premium-input">
-                            <SelectValue placeholder="Select a language" />
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <div className="sm:col-span-2">
+                        <Select {...register("languages")} onValueChange={setNewLanguage}>
+                          <SelectTrigger className="premium-input text-sm">
+                            <SelectValue placeholder={`Select a language ${errors.languages ? "(required)" : ""}`} />
                           </SelectTrigger>
-                          <SelectContent className="bg-slate-800 border-slate-700 max-h-[300px]">
+                          <SelectContent className="bg-slate-800 border-slate-700 max-h-64">
                             {languageOptions.map((language) => (
                               <SelectItem key={language} value={language}>
                                 {language}
@@ -355,9 +399,9 @@ export default function ProfileInputPage() {
                           </SelectContent>
                         </Select>
                       </div>
-                      <Select defaultValue="Conversational" onValueChange={setNewLanguageFluency}>
-                        <SelectTrigger className="premium-input">
-                          <SelectValue placeholder="Fluency" />
+                      <Select {...register("fluency")} defaultValue="Conversational" onValueChange={setNewLanguageFluency}>
+                        <SelectTrigger className="premium-input text-sm">
+                          <SelectValue placeholder={`Fluency ${errors.fluency ? "(required)" : ""}`} />
                         </SelectTrigger>
                         <SelectContent className="bg-slate-800 border-slate-700">
                           {fluencyLevels.map((level) => (
@@ -372,7 +416,7 @@ export default function ProfileInputPage() {
                       <Button
                         type="button"
                         onClick={addLanguage}
-                        className="premium-button-outline"
+                        className="premium-button-outline text-sm"
                         disabled={!newLanguage}
                       >
                         <Plus className="h-4 w-4 mr-1" /> Add Language
@@ -384,13 +428,14 @@ export default function ProfileInputPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="communication-style" className="flex items-center gap-1">
+                    <Label htmlFor="communication-style" className="flex items-center gap-1 text-sm">
                       Communication Style
                     </Label>
                     <Textarea
+                      {...register("communication_style")}
                       id="communication-style"
                       placeholder="Describe your communication style, availability for meetings, preferred contact methods..."
-                      className="min-h-24 premium-input"
+                      className="min-h-16 sm:min-h-24 premium-input text-sm"
                     />
                     <p className="text-xs text-slate-500">
                       This helps clients understand how you prefer to communicate during projects
@@ -401,87 +446,97 @@ export default function ProfileInputPage() {
 
               {/* Portfolio & Links */}
               <Card className="bg-slate-800/50 border-slate-700">
-              <CardHeader>
-                <CardTitle>Portfolio & Experience</CardTitle>
-                <CardDescription>Highlight your best work and professional experience</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="portfolio-url">Portfolio URL</Label>
-                  <Input
-                    id="portfolio-url"
-                    placeholder="https://yourportfolio.com"
-                    className="bg-slate-900/50 border-slate-700 focus:border-purple-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Project Highlights</Label>
-                  <div className="bg-slate-900/50 border border-slate-700 rounded-md p-4 space-y-4">
-                    <div className="space-y-2">
-                      <Input
-                        placeholder="Project Title"
-                        className="bg-slate-800/50 border-slate-700 focus:border-purple-500"
-                      />
-                      <Textarea
-                        placeholder="Brief description of the project, your role, and key achievements..."
-                        className="min-h-20 bg-slate-800/50 border-slate-700 focus:border-purple-500"
-                      />
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full border-dashed border-slate-700 hover:border-slate-600 hover:bg-slate-800 text-slate-400 hover:text-slate-300"
-                    >
-                      <Plus className="h-3.5 w-3.5 mr-1" />
-                      Add Another Project
-                    </Button>
+                <CardHeader className="p-4 sm:p-6">
+                  <CardTitle>Portfolio & Experience</CardTitle>
+                  <CardDescription>Highlight your best work and professional experience</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6 pt-0 sm:pt-0">
+                  <div className="space-y-2">
+                    <Label htmlFor="portfolio-url" className="text-sm">Portfolio URL</Label>
+                    <Input
+                      {...register("portfolio_url")}
+                      id="portfolio-url"
+                      placeholder="https://yourportfolio.com"
+                      className="bg-slate-900/50 border-slate-700 focus:border-purple-500 text-sm"
+                    />
                   </div>
-                </div>
 
-                <div className="space-y-2">
-                  <Label>Upload CV (Optional)</Label>
-                  <div className="border-2 border-dashed border-slate-700 rounded-lg p-6 flex flex-col items-center justify-center text-center">
-                    <div className="w-12 h-12 rounded-full bg-slate-800/80 flex items-center justify-center mb-4">
-                      <Upload className="h-6 w-6 text-slate-400" />
+                  <div className="space-y-2">
+                    <Label className="text-sm">Project Highlights</Label>
+                    <div className="bg-slate-900/50 border border-slate-700 rounded-md p-3 sm:p-4 space-y-3 sm:space-y-4">
+                      <div className="space-y-2">
+                        <Input
+                          {...register("project.title")}
+                          placeholder="Project Title"
+                          className="bg-slate-800/50 border-slate-700 focus:border-purple-500 text-sm"
+                        />
+                        <Textarea
+                          {...register("project.description")}
+                          placeholder="Brief description of the project, your role, and key achievements..."
+                          className="min-h-16 sm:min-h-20 bg-slate-800/50 border-slate-700 focus:border-purple-500 text-sm"
+                        />
+                        <Input
+                          {...register("project.url")}
+                          placeholder="Project URL"
+                          className="bg-slate-800/50 border-slate-700 focus:border-purple-500 text-sm"
+                        />
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full border-dashed border-slate-700 hover:border-slate-600 hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-xs sm:text-sm"
+                      >
+                        <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1" />
+                        Add Another Project
+                      </Button>
                     </div>
-                    <p className="text-sm text-slate-400 mb-4">Drag and drop your CV/resume here, or click to browse</p>
-                    <Button variant="outline" size="sm" className="border-slate-700 text-slate-300">
-                      Browse Files
-                    </Button>
-                    <p className="text-xs text-slate-500 mt-4">Supports PDF, DOCX, TXT (Max 5MB)</p>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm">Upload CV (Optional)</Label>
+                    <div className="border-2 border-dashed border-slate-700 rounded-lg p-4 sm:p-6 flex flex-col items-center justify-center text-center">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-800/80 flex items-center justify-center mb-3 sm:mb-4">
+                        <Upload {...register("cv")} className="h-5 w-5 sm:h-6 sm:w-6 text-slate-400" />
+                      </div>
+                      <p className="text-xs sm:text-sm text-slate-400 mb-3 sm:mb-4">Drag and drop your CV/resume here, or click to browse</p>
+                      <Button variant="outline" size="sm" className="border-slate-700 text-slate-300 text-xs sm:text-sm">
+                        Browse Files
+                      </Button>
+                      <p className="text-xs text-slate-500 mt-3 sm:mt-4">Supports PDF, DOCX, TXT (Max 5MB)</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
 
-            <div className="space-y-8">
+            <div className="space-y-4 sm:space-y-8">
               {/* Freelancer Preferences */}
-              <Card className="premium-card premium-border bg-slate-800/50 border-slate-700 sticky top-24">
-                <CardHeader className="relative z-10">
+              <Card className="premium-card premium-border bg-slate-800/50 border-slate-700 lg:sticky lg:top-24">
+                <CardHeader className="relative z-10 p-4 sm:p-6">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-violet-400" />
+                    <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-violet-400" />
                     <CardTitle>Freelancer Preferences</CardTitle>
                   </div>
                   <CardDescription>Set your rates, availability, and platform preferences</CardDescription>
                 </CardHeader>
-                <CardContent className="relative z-10 space-y-6">
-                  <div className="space-y-4">
-                    <Label className="flex items-center gap-1">
+                <CardContent className="relative z-10 space-y-4 sm:space-y-6 p-4 sm:p-6 pt-0 sm:pt-0">
+                  <div className="space-y-3 sm:space-y-4">
+                    <Label className="flex items-center gap-1 text-sm">
                       Preferred Platforms <span className="text-red-500">*</span>
                     </Label>
-                    <div className="space-y-4">
+                    <div className="space-y-3 sm:space-y-4">
                       <div className="flex items-center space-x-3">
                         <Checkbox
                           id="fiverr"
+                          {...register("Prefferd_platform")}
+                          value="Fiverr"
                           className="border-slate-700 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                         />
                         <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center font-bold text-white text-xs">
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center font-bold text-white text-xs">
                             F
                           </div>
-                          <Label htmlFor="fiverr" className="font-medium cursor-pointer">
+                          <Label htmlFor="fiverr" className="font-medium cursor-pointer text-sm">
                             Fiverr
                           </Label>
                         </div>
@@ -489,14 +544,16 @@ export default function ProfileInputPage() {
 
                       <div className="flex items-center space-x-3">
                         <Checkbox
+                          {...register("Prefferd_platform")}
+                          value="Upwork"
                           id="upwork"
                           className="border-slate-700 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                         />
                         <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center font-bold text-white text-xs">
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center font-bold text-white text-xs">
                             U
                           </div>
-                          <Label htmlFor="upwork" className="font-medium cursor-pointer">
+                          <Label htmlFor="upwork" className="font-medium cursor-pointer text-sm">
                             Upwork
                           </Label>
                         </div>
@@ -504,14 +561,16 @@ export default function ProfileInputPage() {
 
                       <div className="flex items-center space-x-3">
                         <Checkbox
+                          {...register("Prefferd_platform")}
+                          value="Freelancer.com"
                           id="freelancer"
                           className="border-slate-700 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                         />
                         <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center font-bold text-white text-xs">
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center font-bold text-white text-xs">
                             F
                           </div>
-                          <Label htmlFor="freelancer" className="font-medium cursor-pointer">
+                          <Label htmlFor="freelancer" className="font-medium cursor-pointer text-sm">
                             Freelancer.com
                           </Label>
                         </div>
@@ -519,23 +578,24 @@ export default function ProfileInputPage() {
                     </div>
                   </div>
 
-                  <div className="space-y-4 pt-4 border-t border-slate-700">
+                  <div className="space-y-3 sm:space-y-4 pt-3 sm:pt-4 border-t border-slate-700">
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
-                        <Label htmlFor="hourly-rate" className="flex items-center gap-1">
-                          <DollarSign className="h-4 w-4 text-slate-400" />
+                        <Label htmlFor="hourly-rate" className="flex items-center gap-1 text-sm">
+                          <DollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-slate-400" />
                           Hourly Rate (USD) <span className="text-red-500">*</span>
                         </Label>
-                        <span className="text-lg font-medium text-white">${hourlyRate[0]}</span>
+                        <span className="text-base sm:text-lg font-medium text-white">${hourlyRate[0]}</span>
                       </div>
                       <Slider
+                        {...register("hourly_rate")}
                         id="hourly-rate"
                         min={5}
                         max={200}
                         step={5}
                         value={hourlyRate}
                         onValueChange={setHourlyRate}
-                        className="py-4"
+                        className="py-2 sm:py-4"
                       />
                       <div className="flex justify-between text-xs text-slate-500">
                         <span>$5</span>
@@ -545,20 +605,21 @@ export default function ProfileInputPage() {
 
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
-                        <Label htmlFor="weekly-hours" className="flex items-center gap-1">
-                          <Clock className="h-4 w-4 text-slate-400" />
+                        <Label htmlFor="weekly-hours" className="flex items-center gap-1 text-sm">
+                          <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-slate-400" />
                           Available Weekly Hours <span className="text-red-500">*</span>
                         </Label>
-                        <span className="text-lg font-medium text-white">{weeklyHours[0]} hrs</span>
+                        <span className="text-base sm:text-lg font-medium text-white">{weeklyHours[0]} hrs</span>
                       </div>
                       <Slider
+                        {...register("weekly_hours")}
                         id="weekly-hours"
                         min={5}
                         max={60}
                         step={5}
                         value={weeklyHours}
                         onValueChange={setWeeklyHours}
-                        className="py-4"
+                        className="py-2 sm:py-4"
                       />
                       <div className="flex justify-between text-xs text-slate-500">
                         <span>5 hrs</span>
@@ -567,49 +628,55 @@ export default function ProfileInputPage() {
                     </div>
                   </div>
 
-                  <div className="space-y-4 pt-4 border-t border-slate-700">
+                  <div className="space-y-3 sm:space-y-4 pt-3 sm:pt-4 border-t border-slate-700">
                     <div className="space-y-2">
-                      <Label className="flex items-center gap-1">
-                        <Globe className="h-4 w-4 text-slate-400" />
+                      <Label className="flex items-center gap-1 text-sm">
+                        <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-slate-400" />
                         Work Preferences
                       </Label>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-2 gap-3 sm:gap-4">
                         <div className="flex items-center space-x-2">
                           <Checkbox
                             id="remote"
                             defaultChecked
                             className="border-slate-700 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                           />
-                          <Label htmlFor="remote" className="text-sm cursor-pointer">
+                          <Label htmlFor="remote" className="text-xs sm:text-sm cursor-pointer">
                             Remote
                           </Label>
                         </div>
                         <div className="flex items-center space-x-2">
                           <Checkbox
+                            {...register("work_preferences")}
+                            value="On-site"
                             id="onsite"
                             className="border-slate-700 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                           />
-                          <Label htmlFor="onsite" className="text-sm cursor-pointer">
+                          <Label htmlFor="onsite" className="text-xs sm:text-sm cursor-pointer">
                             On-site
                           </Label>
                         </div>
                         <div className="flex items-center space-x-2">
                           <Checkbox
+                            {...register("work_preferences")}
+                            value="short term"
                             id="short-term"
                             defaultChecked
                             className="border-slate-700 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                           />
-                          <Label htmlFor="short-term" className="text-sm cursor-pointer">
+                          <Label htmlFor="short-term" className="text-xs sm:text-sm cursor-pointer">
                             Short-term
                           </Label>
                         </div>
                         <div className="flex items-center space-x-2">
                           <Checkbox
+                            {...register("work_preferences")}
+                            value="long term"
                             id="long-term"
                             defaultChecked
                             className="border-slate-700 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                           />
-                          <Label htmlFor="long-term" className="text-sm cursor-pointer">
+                          <Label htmlFor="long-term" className="text-xs sm:text-sm cursor-pointer">
                             Long-term
                           </Label>
                         </div>
@@ -617,35 +684,43 @@ export default function ProfileInputPage() {
                     </div>
                   </div>
 
-                  <div className="space-y-4 pt-4 border-t border-slate-700">
+                  <div className="space-y-3 sm:space-y-4 pt-3 sm:pt-4 border-t border-slate-700">
                     <div className="space-y-2">
-                      <Label className="flex items-center gap-1">Additional Options</Label>
-                      <div className="space-y-3">
+                      <Label className="flex items-center gap-1 text-sm">Additional Options</Label>
+                      <div className="space-y-2 sm:space-y-3">
                         <div className="flex items-center justify-between">
-                          <Label htmlFor="cover-letter" className="text-sm cursor-pointer">
+                          <Label htmlFor="cover-letter" className="text-xs sm:text-sm cursor-pointer">
                             Generate Cover Letter Templates
                           </Label>
-                          <Switch id="cover-letter" className="data-[state=checked]:bg-purple-600" />
+                          <Switch
+                          {...register("generate_cover_letter")}
+                           id="cover-letter" className="data-[state=checked]:bg-purple-600" />
                         </div>
                         <div className="flex items-center justify-between">
-                          <Label htmlFor="proposal-templates" className="text-sm cursor-pointer">
+                          <Label htmlFor="proposal-templates" className="text-xs sm:text-sm cursor-pointer">
                             Create Proposal Templates
                           </Label>
-                          <Switch id="proposal-templates" className="data-[state=checked]:bg-purple-600" />
+                          <Switch 
+                          {...register("generate_proposal_template")}
+                          id="proposal-templates" className="data-[state=checked]:bg-purple-600" />
                         </div>
                         <div className="flex items-center justify-between">
-                          <Label htmlFor="optimize-seo" className="text-sm cursor-pointer">
+                          <Label htmlFor="optimize-seo" className="text-xs sm:text-sm cursor-pointer">
                             Optimize for Platform SEO
                           </Label>
-                          <Switch id="optimize-seo" defaultChecked className="data-[state=checked]:bg-purple-600" />
+                          <Switch
+                          {...register("Optamize_for_platform_Seo")}
+                           id="optimize-seo" defaultChecked className="data-[state=checked]:bg-purple-600" />
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <Button className="w-full premium-button">
+                  <Button
+                  onClick={handleSubmit(onSubmit)}
+                   className="w-full premium-button text-sm">
                     Generate My Profiles
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    <ArrowRight className="ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </Button>
                 </CardContent>
               </Card>
