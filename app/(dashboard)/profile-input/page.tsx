@@ -101,7 +101,8 @@ export default function ProfileInputPage() {
       if (error) {
         console.error('Error loading entries:', error)
       }
-      const Data_current = data[data.length - 1]
+      // const Data_current = data[data.length - 1]
+      const Data_current = Array.isArray(data) && data.length > 0 ? data[data.length - 1] : null;
       if (Data_current) {
         setValue("role", Data_current.role);
         setValue("experienceLevel", Data_current.experience_level);
