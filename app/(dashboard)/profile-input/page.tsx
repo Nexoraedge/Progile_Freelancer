@@ -36,6 +36,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { formSchema } from "@/app/actions/Util"
+import type { Database } from '@/lib/supabase/config'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 export default function ProfileInputPage() {
 
@@ -211,32 +213,60 @@ useEffect(() => {
 
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    const supabase = createClientComponentClient<Database>()
     try {
-      setIsLoading(true);
-      console.log("Complete Form Data:", data);
-      
-      // Here you would send data to your API endpoint
-      // const response = await fetch('/api/profile', {
-      //   method: 'POST',
-      //   body: JSON.stringify(data)
-      // });
-      
-      // Show success message
-      // if (response.ok) {
-      //   alert("Profile created successfully!");
-      // }
-      
-      // For now just simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      alert("Profile created successfully!");
-      
+      setIsLoading(true)
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+  
+      const token = session?.access_token
+      if (!token) {
+        alert('You must be signed in.')
+        return
+      }
+  
+      const { data: user } = await supabase.auth.getUser()
+  
+      const insertPayload = {
+        user_id: user?.user?.id,
+        role: data.role,
+        experience_level: data.experienceLevel,
+        years_experience: data.yearsExperience,
+        location: data.location || null,
+        professional_summary: data.professional_summary,
+        skills: data.skills,
+        services: data.services,
+        hourly_rate: data.hourly_rate,
+        weekly_hours: data.weekly_hours,
+        languages: data.languages,
+        fluencylevels: data.fluencylevels || {},
+        communication_style: data.communication_style || null,
+        portfolio_url: data.portfolio_url || null,
+        project: data.project || [],
+        cv_url: null, // optional: upload and attach cv_url if needed
+        prefferd_platform: data.Prefferd_platform,
+        work_preferences: data.work_preferences || [],
+        generate_cover_letter: data.generate_cover_letter || false,
+        generate_proposal_template: data.generate_proposal_template || false,
+        optamize_for_platform_seo: data.Optamize_for_platform_Seo || false,
+      }
+  
+      const { error } = await supabase.from('entries').insert(insertPayload)
+  
+      if (error) {
+        throw error
+      }
+  
+      alert('Profile created successfully!')
     } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("There was an error saving your profile. Please try again.");
+      console.error('Error submitting form:', error)
+      alert('There was an error saving your profile. Please try again.')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
   }
+  
 
   return (
     <>
