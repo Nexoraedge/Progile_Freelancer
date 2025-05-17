@@ -323,6 +323,19 @@ export default function ProfileInputPage() {
 
       const { error } = await supabase.from('entries').insert(insertPayload)
 
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          role: data.role,
+          summary: data.professional_summary,
+          skills: data.skills
+        }),
+      });
+      
+      const dataa = await res.json();
+      console.log("dataa : ", dataa);
+
       if (error) {
         throw error
       }
@@ -672,7 +685,7 @@ export default function ProfileInputPage() {
                   <div className="space-y-2">
                     <Label className="text-sm">Number of Projects</Label>
                     <Select
-                      defaultValue={noofProject.toString() || "0"}
+                      defaultValue={(noofProject-1).toString() || "0"}
                       onValueChange={(e) => handleAddProject(parseInt(e))}>
                       <SelectTrigger className="premium-input text-sm">
                         <SelectValue placeholder="Select number of projects" />
@@ -691,7 +704,7 @@ export default function ProfileInputPage() {
                     <div className="mt-4">
                       <Label className="text-sm font-medium">Project Highlights</Label>
                       <div className="space-y-4 mt-2">
-                        {Array.from({ length: noofProject}).map((_, index) => (
+                        {Array.from({ length: noofProject+1}).map((_, index) => (
                           <div key={index} className="bg-slate-900/50 border border-slate-700 rounded-md p-3 sm:p-4 space-y-3 sm:space-y-4">
                             <div className="space-y-2">
                               <Input
