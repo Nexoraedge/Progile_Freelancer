@@ -60,9 +60,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       }
     }
 
+   
+
     fetchUserData()
   }, [router])
 
+  
   const handleSignOut = async () => {
     try {
       setIsLoading(true)
@@ -81,7 +84,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const email = userData?.email
   const initials = (fullName?.[0] || "") + (fullName?.split(" ")[1]?.[0] || "") 
   // 9351310421
-// console.log(userData)
+
 
   if (isLoading) {
     return (

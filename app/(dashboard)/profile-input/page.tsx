@@ -141,16 +141,16 @@ export default function ProfileInputPage() {
   }, [resumeFile, setValue]);
 
   // Add this near your other validation code
-  useEffect(() => {
-    if (resumeFile) {
-      if (resumeFile.size > 5 * 1024 * 1024) {
-        alert("File size exceeds 5MB limit");
-        removeResume();
-      }
+useEffect(() => {
+  if (resumeFile) {
+    if (resumeFile.size > 5 * 1024 * 1024) {
+      alert("File size exceeds 5MB limit");
+      removeResume();
     }
-  }, [resumeFile]);
+  }
+}, [resumeFile]);
 
-
+  
 
   // Handlers for form inputs
   const addSkill = () => {
@@ -214,22 +214,22 @@ export default function ProfileInputPage() {
     try {
       setIsLoading(true);
       console.log("Complete Form Data:", data);
-
+      
       // Here you would send data to your API endpoint
       // const response = await fetch('/api/profile', {
       //   method: 'POST',
       //   body: JSON.stringify(data)
       // });
-
+      
       // Show success message
       // if (response.ok) {
       //   alert("Profile created successfully!");
       // }
-
+      
       // For now just simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       alert("Profile created successfully!");
-
+      
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("There was an error saving your profile. Please try again.");
@@ -248,7 +248,8 @@ export default function ProfileInputPage() {
           </p>
         </div>
 
-        <form className="space-y-4 sm:space-y-8">
+        <form     
+ className="space-y-4 sm:space-y-8">
           <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
               {/* Professional Information */}
