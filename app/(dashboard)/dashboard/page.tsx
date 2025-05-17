@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { ArrowRight, FileText, Upload, Sparkles, Clock, Target, Download, Settings } from "lucide-react"
-import DashboardLayout from "@/components/Dashboard-layout"
+
 import loadUser from "@/app/actions/Util"
 import { useEffect } from "react"
 import { useState } from "react"
@@ -30,7 +30,7 @@ export default function DashboardPage() {
   
   
   return (
-    <DashboardLayout >
+
       <div className="p-6 w-full">
         {/* Welcome section */}
         <div className="mb-8">
@@ -269,6 +269,6 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    
   )
 }

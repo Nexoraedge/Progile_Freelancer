@@ -6,13 +6,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Copy, RefreshCw, Download, ThumbsUp, ThumbsDown } from "lucide-react"
-import DashboardLayout from "@/components/Dashboard-layout"
+
 
 export default function GeneratedContentPage() {
   const [activeTab, setActiveTab] = useState("fiverr")
 
   return (
-    <DashboardLayout>
+    <>
       <div className="p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Generated Content</h1>
@@ -718,6 +718,6 @@ export default function GeneratedContentPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </DashboardLayout>
+    </>
   )
 }

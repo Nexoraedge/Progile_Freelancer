@@ -27,6 +27,8 @@ import { cn } from "@/lib/utils"
 import { navigation } from "@/constants/util"
 import { createClient } from "@/lib/supabase/browser"
 import loadUser from "@/app/actions/Util"
+import { UserProvider } from "@/context/UserContext"
+
 
 
 
@@ -74,10 +76,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     }
   }
 
-  const fullName = userData?.full_name || userData?.firstName + " " + userData?.lastName
+  const fullName = userData?.full_name || userData?.firstName + " " + userData?.lastName || userData?.user_name
+
   const email = userData?.email
   const initials = (fullName?.[0] || "") + (fullName?.split(" ")[1]?.[0] || "") 
-  
+  // 9351310421
+// console.log(userData)
 
   if (isLoading) {
     return (
@@ -88,6 +92,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   return (
+    <UserProvider>
     <div className="flex h-screen bg-slate-950 text-slate-100 overflow-hidden">
       {/* Mobile sidebar backdrop */}
       {isSidebarOpen && (
@@ -213,12 +218,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center gap-2 hover:bg-slate-800/50 px-2">
-                    <Avatar className="h-8 w-8 border border-slate-700">
+                    <Avatar className="h-8 w-8 border-[2px] border-[#42a3e0]">
                       <AvatarImage className="rounded-full object-contain`" src={userData?.avatar_url} alt="User" />
                       <AvatarFallback className={ "bg-slate-700 text-slate-200"}>{initials}</AvatarFallback>
                     </Avatar>
                     <div className="hidden md:block text-sm font-medium text-left">
-                      <div>{userData?.full_name || `${userData?.firstName} ${userData?.lastName}`}</div>
+                      <div>{userData?.full_name || userData?.user_name || `${userData?.firstName} ${userData?.lastName}` } </div>
                       <div className="text-xs text-slate-400 truncate max-w-[120px]">{email}</div>
                     </div>
                     <ChevronDown className="h-4 w-4 text-slate-400" />
@@ -259,5 +264,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </main>
       </div>
     </div>
+    </UserProvider>
   )
 }

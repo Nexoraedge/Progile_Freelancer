@@ -18,48 +18,36 @@ export default async function loadUser() {
     }
 
 
-    export const formSchema = z.object({
-      role: z.string().min(1, "Role is required"),
-      experienceLevel: z.enum(["Beginner", "Intermediate", "Expert"]),
-      yearsExperience: z.string().min(1, "Years of experience is required"),
-      location: z.string().min(1, "Location is required"),
-      professional_summary: z.string().min(1, "Professional summary is required"),
-    
-      skills: z.array(z.string()).min(1, "At least one skill is required"),
-      services: z.array(z.string()).min(1, "At least one service is required"),
-    
-      hourly_rate: z.number({
-        invalid_type_error: "Hourly rate must be a number",
-      }).min(1, "Hourly rate is required"),
-    
-      weekly_hours: z.number({
-        invalid_type_error: "Weekly hours must be a number",
-      }).min(1, "Weekly hours are required"),
-    
-      languages: z.array(z.string()).min(1, "Select at least one language"),
-    
-      fluency: z.record(
-        z.enum(["Basic", "Conversational", "Fluent", "Native"]),
-        {
-          required_error: "Fluency is required",
-          invalid_type_error: "Fluency must be a valid map",
-        }
-      ),
-    
-      communication_style: z.string().min(1, "Communication style is required"),
-    
-      portfolio_url: z.string().url("Must be a valid URL").min(1, "Portfolio is required"),
-    
-      project: z.object({
-        title: z.string().min(1, "Project title is required"),
-        description: z.string().min(1, "Project description is required"),
-        url: z.string().url("Project URL must be valid").min(1, "Project URL is required"),
-      }),
-    
-      cv: z.string().min(1, "CV upload is required"),
-      Prefferd_platform:z.enum(["Fiverr", "Upwork", "Freelancer", "none"]),
-      work_preferences: z.enum(["remote", "onsite", "short term", "long term"]),
-      generate_cover_letter: z.boolean(),
-      generate_proposal_template: z.boolean(),
-      Optamize_for_platform_Seo: z.boolean(),
+    // Define the project schema
+    const projectSchema = z.object({
+      title: z.string().optional(),
+      description: z.string().optional(),
+      url: z.string().url().optional().or(z.string().length(0)),
     });
+    
+    // Define the main form schema
+    export const formSchema = z.object({
+      role: z.string().min(1, { message: "Role is required" }),
+      experienceLevel: z.string().min(1, { message: "Experience level is required" }),
+      yearsExperience: z.string().min(1, { message: "Years of experience is required" }),
+      location: z.string().optional(),
+      professional_summary: z.string().min(10, { message: "Professional summary is required" }),
+      skills: z.array(z.string()).min(1, { message: "At least one skill is required" }),
+      services: z.array(z.string()).min(1, { message: "At least one service is required" }),
+      hourly_rate: z.number().min(5, { message: "Hourly rate must be at least $5" }),
+      weekly_hours: z.number().min(5, { message: "Weekly hours must be at least 5" }),
+      languages: z.array(z.string()).min(1, { message: "At least one language is required" }),
+      fluencylevels: z.record(z.string()).optional(),
+      communication_style: z.string().optional(),
+      portfolio_url: z.string().url().optional().or(z.string().length(0)),
+      project: z.array(projectSchema).optional(),
+      cv: z.instanceof(File).optional(),
+      Prefferd_platform: z.array(z.string()).min(1, { message: "Select at least one platform" }),
+      work_preferences: z.array(z.string()).optional(),
+      generate_cover_letter: z.boolean().optional(),
+      generate_proposal_template: z.boolean().optional(),
+      Optamize_for_platform_Seo: z.boolean().optional(),
+    });
+    
+    // Type definitions for form data
+    export type FormSchema = z.infer<typeof formSchema>;

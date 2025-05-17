@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -29,17 +28,14 @@ import {
   Code,
   Languages,
   Sparkles,
+  Loader2,
 } from "lucide-react"
-import DashboardLayout from "@/components/Dashboard-layout"
 // Sample data
 import { skillOptions, languageOptions, fluencyLevels, serviceCategories } from "@/constants/util"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { formSchema } from "@/app/actions/Util"
-
-
-
 
 export default function ProfileInputPage() {
 
@@ -53,41 +49,108 @@ export default function ProfileInputPage() {
   const [hourlyRate, setHourlyRate] = useState([50])
   const [weeklyHours, setWeeklyHours] = useState([40])
   const [resumeFile, setResumeFile] = useState<File | null>(null)
+  const [noofProject, setNoofProject] = useState(0)
+  const [yearsExperience, setYearsExperience] = useState(0)
+  const [ExperienceLevel, setExperienceLevel] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  // const [Generate_cover_letter, setGenerate_cover_letter] = useState(false);
+  // const [Generate_proposal_template, setGenerate_proposal_template] = useState(false);
+  // const [Optamize_for_platform_Seo, setOptamize_for_platform_Seo] = useState(false);
   const {
     register,
     handleSubmit,
     control,
     watch,
+    setValue,
     formState: { errors }
   } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       role: "",
-      experienceLevel: "Beginner",
+      experienceLevel: "",
       yearsExperience: "",
       location: "",
       professional_summary: "",
       skills: [],
       services: [],
-      hourly_rate: 0,
-      weekly_hours: 0,
+      hourly_rate: 50,
+      weekly_hours: 40,
       languages: [],
-      fluency: {},
+      fluencylevels: {},
       communication_style: "",
       portfolio_url: "",
-      project: {
-        title: "",
-        description: "",
-        url: ""
-      },
-      cv: "",
-      Prefferd_platform: "none",
-      work_preferences: "remote",
+      project: [],
+      cv: undefined,
+      Prefferd_platform: ["upwork"],
+      work_preferences: ["remote"],
       generate_cover_letter: false,
       generate_proposal_template: false,
       Optamize_for_platform_Seo: false
     }
   });
+  // console.log("Current form values:", watch());
+
+  useEffect(() => {
+    setValue("skills", selectedSkills);
+  }, [selectedSkills, setValue]);
+
+  //year experence
+  useEffect(() => {
+    setValue("yearsExperience", yearsExperience.toString());
+  }, [yearsExperience, setValue]);
+
+  useEffect(() => {
+    setValue("experienceLevel", ExperienceLevel);
+  }, [ExperienceLevel, setValue]);
+
+  useEffect(() => {
+    if (!selectedLanguages || selectedLanguages.length === 0) {
+      setValue("languages", []);
+      setValue("fluencylevels", {});
+      return;
+    }
+
+    const languages = selectedLanguages.map(lang => lang.language);
+    const fluencyObject = selectedLanguages.reduce((acc, lang) => {
+      if (lang.language && lang.fluency !== undefined) {
+        acc[lang.language] = lang.fluency;
+      }
+      return acc;
+    }, {} as Record<string, any>);
+
+    setValue("languages", languages);
+    setValue("fluencylevels", fluencyObject);
+  }, [selectedLanguages, setValue]);
+
+  useEffect(() => {
+    setValue("services", services);
+  }, [services, setValue]);
+
+  useEffect(() => {
+    setValue("hourly_rate", hourlyRate[0]);
+  }, [hourlyRate, setValue]);
+
+  useEffect(() => {
+    setValue("weekly_hours", weeklyHours[0]);
+  }, [weeklyHours, setValue]);
+
+  useEffect(() => {
+    if (resumeFile) {
+      setValue("cv", resumeFile);
+    }
+  }, [resumeFile, setValue]);
+
+  // Add this near your other validation code
+  useEffect(() => {
+    if (resumeFile) {
+      if (resumeFile.size > 5 * 1024 * 1024) {
+        alert("File size exceeds 5MB limit");
+        removeResume();
+      }
+    }
+  }, [resumeFile]);
+
+
 
   // Handlers for form inputs
   const addSkill = () => {
@@ -124,6 +187,10 @@ export default function ProfileInputPage() {
       setNewService("")
     }
   }
+  const handleAddProject = (e: number) => {
+    setNoofProject(e);
+  }
+
 
   const removeService = (service: string) => {
     setServices(services.filter((s) => s !== service))
@@ -131,20 +198,48 @@ export default function ProfileInputPage() {
 
   const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setResumeFile(e.target.files[0])
+      const file = e.target.files[0];
+      setResumeFile(file);
+      setValue("cv", file);
     }
   }
 
   const removeResume = () => {
-    setResumeFile(null)
+    setResumeFile(null);
+    setValue("cv", undefined);
   }
 
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log(data)
+    try {
+      setIsLoading(true);
+      console.log("Complete Form Data:", data);
+
+      // Here you would send data to your API endpoint
+      // const response = await fetch('/api/profile', {
+      //   method: 'POST',
+      //   body: JSON.stringify(data)
+      // });
+
+      // Show success message
+      // if (response.ok) {
+      //   alert("Profile created successfully!");
+      // }
+
+      // For now just simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      alert("Profile created successfully!");
+
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("There was an error saving your profile. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
-    <DashboardLayout>
+    <>
       <div className="p-3 sm:p-6">
         <div className="mb-4 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2 premium-text">Complete Your Freelancer Profile</h1>
@@ -187,7 +282,10 @@ export default function ProfileInputPage() {
                       <Label htmlFor="experience-level" className="flex items-center gap-1 text-sm">
                         Experience Level <span className="text-red-500">*</span>
                       </Label>
-                      <Select {...register("experienceLevel")} required>
+                      <Select
+                        onValueChange={(value) => { setValue("experienceLevel", value) }}
+                        defaultValue={watch("experienceLevel")}
+                        required>
                         <SelectTrigger className="premium-input text-sm">
                           <SelectValue placeholder={`Select your experience level ${errors.experienceLevel ? "(required)" : ""}`} />
                         </SelectTrigger>
@@ -201,13 +299,18 @@ export default function ProfileInputPage() {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+
                     <div className="space-y-2">
                       <Label htmlFor="years-experience" className="flex items-center gap-1 text-sm">
                         Years of Experience <span className="text-red-500">*</span>
                       </Label>
-                      <Select {...register("yearsExperience")} required>
+                      <Select
+                        onValueChange={(value) => { setValue("yearsExperience", value) }}
+                        defaultValue={watch("experienceLevel")}
+                        required>
                         <SelectTrigger className="premium-input text-sm">
-                          <SelectValue placeholder={`Select years of experience ${errors.yearsExperience ? "(required)" : ""}`} />
+                          <SelectValue
+                            placeholder={`Select years of experience ${errors.yearsExperience ? "(required)" : ""}`} />
                         </SelectTrigger>
                         <SelectContent className="bg-slate-800 border-slate-700">
                           {Array.from({ length: 20 }, (_, i) => (
@@ -219,6 +322,7 @@ export default function ProfileInputPage() {
                         </SelectContent>
                       </Select>
                     </div>
+
                     <div className="space-y-2">
                       <Label htmlFor="location" className="flex items-center gap-1 text-sm">
                         Location
@@ -399,9 +503,9 @@ export default function ProfileInputPage() {
                           </SelectContent>
                         </Select>
                       </div>
-                      <Select {...register("fluency")} defaultValue="Conversational" onValueChange={setNewLanguageFluency}>
+                      <Select {...register("fluencylevels")} defaultValue="Conversational" onValueChange={setNewLanguageFluency}>
                         <SelectTrigger className="premium-input text-sm">
-                          <SelectValue placeholder={`Fluency ${errors.fluency ? "(required)" : ""}`} />
+                          <SelectValue placeholder={`Fluency ${errors.fluencylevels ? "(required)" : ""}`} />
                         </SelectTrigger>
                         <SelectContent className="bg-slate-800 border-slate-700">
                           {fluencyLevels.map((level) => (
@@ -462,47 +566,108 @@ export default function ProfileInputPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-sm">Project Highlights</Label>
-                    <div className="bg-slate-900/50 border border-slate-700 rounded-md p-3 sm:p-4 space-y-3 sm:space-y-4">
-                      <div className="space-y-2">
-                        <Input
-                          {...register("project.title")}
-                          placeholder="Project Title"
-                          className="bg-slate-800/50 border-slate-700 focus:border-purple-500 text-sm"
-                        />
-                        <Textarea
-                          {...register("project.description")}
-                          placeholder="Brief description of the project, your role, and key achievements..."
-                          className="min-h-16 sm:min-h-20 bg-slate-800/50 border-slate-700 focus:border-purple-500 text-sm"
-                        />
-                        <Input
-                          {...register("project.url")}
-                          placeholder="Project URL"
-                          className="bg-slate-800/50 border-slate-700 focus:border-purple-500 text-sm"
-                        />
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full border-dashed border-slate-700 hover:border-slate-600 hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-xs sm:text-sm"
-                      >
-                        <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1" />
-                        Add Another Project
-                      </Button>
-                    </div>
+                    <Label className="text-sm">Number of Projects</Label>
+                    <Select onValueChange={(e) => handleAddProject(parseInt(e))}>
+                      <SelectTrigger className="premium-input text-sm">
+                        <SelectValue placeholder="Select number of projects" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-slate-800 border-slate-700 max-h-64">
+                        {Array.from({ length: 21 }).map((_, index) => (
+                          <SelectItem key={index} value={index.toString()}>
+                            {index + 1}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
+
+                  {noofProject >= 0 && (
+                    <div className="mt-4">
+                      <Label className="text-sm font-medium">Project Highlights</Label>
+                      <div className="space-y-4 mt-2">
+                        {Array.from({ length: noofProject + 1 }).map((_, index) => (
+                          <div key={index} className="bg-slate-900/50 border border-slate-700 rounded-md p-3 sm:p-4 space-y-3 sm:space-y-4">
+                            <div className="space-y-2">
+                              <Input
+                                {...register(`project.${index}.title`)}
+                                placeholder="Project Title"
+                                className="bg-slate-800/50 border-slate-700 focus:border-purple-500 text-sm"
+                              />
+                              <Textarea
+                                {...register(`project.${index}.description`)}
+                                placeholder="Brief description of the project, your role, and key achievements..."
+                                className="min-h-16 sm:min-h-20 bg-slate-800/50 border-slate-700 focus:border-purple-500 text-sm"
+                              />
+                              <Input
+                                {...register(`project.${index}.url`)}
+                                placeholder="Project URL"
+                                className="bg-slate-800/50 border-slate-700 focus:border-purple-500 text-sm"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="space-y-2">
                     <Label className="text-sm">Upload CV (Optional)</Label>
                     <div className="border-2 border-dashed border-slate-700 rounded-lg p-4 sm:p-6 flex flex-col items-center justify-center text-center">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-800/80 flex items-center justify-center mb-3 sm:mb-4">
-                        <Upload {...register("cv")} className="h-5 w-5 sm:h-6 sm:w-6 text-slate-400" />
-                      </div>
-                      <p className="text-xs sm:text-sm text-slate-400 mb-3 sm:mb-4">Drag and drop your CV/resume here, or click to browse</p>
-                      <Button variant="outline" size="sm" className="border-slate-700 text-slate-300 text-xs sm:text-sm">
-                        Browse Files
-                      </Button>
-                      <p className="text-xs text-slate-500 mt-3 sm:mt-4">Supports PDF, DOCX, TXT (Max 5MB)</p>
+                      {resumeFile ? (
+                        <div className="w-full">
+                          <div className="flex items-center justify-between bg-slate-800/80 p-2 rounded-md">
+                            <div className="flex items-center">
+                              <FileText className="h-5 w-5 text-purple-400 mr-2" />
+                              <span className="text-sm truncate">{resumeFile.name}</span>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={removeResume}
+                              className="text-slate-400 hover:text-white"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-800/80 flex items-center justify-center mb-3 sm:mb-4">
+                            <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-slate-400" />
+                          </div>
+                          <p className="text-xs sm:text-sm text-slate-400 mb-3 sm:mb-4">
+                            Drag and drop your CV/resume here, or click to browse
+                          </p>
+                          <label htmlFor="cv-upload">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="border-slate-700 text-slate-300 text-xs sm:text-sm"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                document.getElementById('cv-upload')?.click();
+                              }}
+                            >
+                              Browse Files
+                            </Button>
+                          </label>
+                          <input
+                            id="cv-upload"
+                            type="file"
+                            accept=".pdf,.doc,.docx,.txt"
+                            className="hidden"
+                            onChange={handleResumeUpload}
+                          // Add this register function to connect to react-hook-form
+                          // Note: We don't actually use register here since we handle the onChange manually
+                          // But we preserve the connection to the form
+                          />
+                          <p className="text-xs text-slate-500 mt-3 sm:mt-4">
+                            Supports PDF, DOCX, TXT (Max 5MB)
+                          </p>
+                        </>
+                      )}
                     </div>
                   </div>
                 </CardContent>
@@ -528,8 +693,14 @@ export default function ProfileInputPage() {
                       <div className="flex items-center space-x-3">
                         <Checkbox
                           id="fiverr"
-                          {...register("Prefferd_platform")}
-                          value="Fiverr"
+                          checked={watch("Prefferd_platform")?.includes("fiverr")}
+                          onCheckedChange={(checked) => {
+                            const current_Platform = watch("Prefferd_platform") || [];
+                            setValue(
+                              "Prefferd_platform",
+                              checked ? [...current_Platform, "fiverr"] : current_Platform.filter((platform: string | never[]) => platform !== "fiverr")
+                            )
+                          }}
                           className="border-slate-700 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                         />
                         <div className="flex items-center gap-2">
@@ -544,8 +715,15 @@ export default function ProfileInputPage() {
 
                       <div className="flex items-center space-x-3">
                         <Checkbox
-                          {...register("Prefferd_platform")}
-                          value="Upwork"
+                          checked={watch("Prefferd_platform")?.includes("upwork")}
+                          onCheckedChange={(checked) => {
+                            const current_Platform = watch("Prefferd_platform") || [];
+                            setValue(
+                              "Prefferd_platform",
+                              checked ? [...current_Platform, "upwork"] : current_Platform.filter((platform: string | never[]) => platform !== "upwork")
+                            )
+                          }}
+
                           id="upwork"
                           className="border-slate-700 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                         />
@@ -561,8 +739,15 @@ export default function ProfileInputPage() {
 
                       <div className="flex items-center space-x-3">
                         <Checkbox
-                          {...register("Prefferd_platform")}
-                          value="Freelancer.com"
+                          checked={watch("Prefferd_platform")?.includes("freelancer")}
+                          onCheckedChange={(checked) => {
+                            const current_Platform = watch("Prefferd_platform") || [];
+                            setValue(
+                              "Prefferd_platform",
+                              checked ? [...current_Platform, "freelancer"] : current_Platform.filter((platform: string | never[]) => platform !== "freelancer")
+                            )
+                          }}
+
                           id="freelancer"
                           className="border-slate-700 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                         />
@@ -638,7 +823,14 @@ export default function ProfileInputPage() {
                         <div className="flex items-center space-x-2">
                           <Checkbox
                             id="remote"
-                            defaultChecked
+                            checked={watch("work_preferences")?.includes("remote")}
+                            onCheckedChange={(checked) => {
+                              const currentPrefs = watch("work_preferences") || [];
+                              setValue(
+                                "work_preferences",
+                                checked ? [...currentPrefs, "remote"] : currentPrefs.filter((pref: string | never[]) => pref !== "remote")
+                              )
+                            }}
                             className="border-slate-700 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                           />
                           <Label htmlFor="remote" className="text-xs sm:text-sm cursor-pointer">
@@ -647,9 +839,15 @@ export default function ProfileInputPage() {
                         </div>
                         <div className="flex items-center space-x-2">
                           <Checkbox
-                            {...register("work_preferences")}
-                            value="On-site"
                             id="onsite"
+                            checked={watch("work_preferences")?.includes("onsite")}
+                            onCheckedChange={(checked) => {
+                              const currentPrefs = watch("work_preferences") || [];
+                              setValue(
+                                "work_preferences",
+                                checked ? [...currentPrefs, "onsite"] : currentPrefs.filter((pref: string | never[]) => pref !== "onsite")
+                              )
+                            }}
                             className="border-slate-700 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                           />
                           <Label htmlFor="onsite" className="text-xs sm:text-sm cursor-pointer">
@@ -658,10 +856,15 @@ export default function ProfileInputPage() {
                         </div>
                         <div className="flex items-center space-x-2">
                           <Checkbox
-                            {...register("work_preferences")}
-                            value="short term"
                             id="short-term"
-                            defaultChecked
+                            checked={watch("work_preferences")?.includes("short term")}
+                            onCheckedChange={(checked) => {
+                              const currentPrefs = watch("work_preferences") || [];
+                              setValue(
+                                "work_preferences",
+                                checked ? [...currentPrefs, "short term"] : currentPrefs.filter((pref: string | never[]) => pref !== "short term")
+                              )
+                            }}
                             className="border-slate-700 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                           />
                           <Label htmlFor="short-term" className="text-xs sm:text-sm cursor-pointer">
@@ -670,7 +873,14 @@ export default function ProfileInputPage() {
                         </div>
                         <div className="flex items-center space-x-2">
                           <Checkbox
-                            {...register("work_preferences")}
+                            checked={watch("work_preferences")?.includes("long term")}
+                            onCheckedChange={(checked) => {
+                              const currentPrefs = watch("work_preferences") || [];
+                              setValue(
+                                "work_preferences",
+                                checked ? [...currentPrefs, "long term"] : currentPrefs.filter((pref: string | never[]) => pref !== "long term")
+                              )
+                            }}
                             value="long term"
                             id="long-term"
                             defaultChecked
@@ -679,6 +889,7 @@ export default function ProfileInputPage() {
                           <Label htmlFor="long-term" className="text-xs sm:text-sm cursor-pointer">
                             Long-term
                           </Label>
+
                         </div>
                       </div>
                     </div>
@@ -693,33 +904,44 @@ export default function ProfileInputPage() {
                             Generate Cover Letter Templates
                           </Label>
                           <Switch
-                          {...register("generate_cover_letter")}
-                           id="cover-letter" className="data-[state=checked]:bg-purple-600" />
+                            checked={watch("generate_cover_letter") || false}
+                            onCheckedChange={(checked) => setValue("generate_cover_letter", checked)}
+                            id="cover-letter" className="data-[state=checked]:bg-purple-600" />
                         </div>
                         <div className="flex items-center justify-between">
                           <Label htmlFor="proposal-templates" className="text-xs sm:text-sm cursor-pointer">
                             Create Proposal Templates
                           </Label>
-                          <Switch 
-                          {...register("generate_proposal_template")}
-                          id="proposal-templates" className="data-[state=checked]:bg-purple-600" />
+                          <Switch
+                            checked={watch("generate_proposal_template") || false}
+                            onCheckedChange={(checked) => setValue("generate_proposal_template", checked)}
+                            id="proposal-templates" className="data-[state=checked]:bg-purple-600" />
                         </div>
                         <div className="flex items-center justify-between">
                           <Label htmlFor="optimize-seo" className="text-xs sm:text-sm cursor-pointer">
                             Optimize for Platform SEO
                           </Label>
                           <Switch
-                          {...register("Optamize_for_platform_Seo")}
-                           id="optimize-seo" defaultChecked className="data-[state=checked]:bg-purple-600" />
+                            id="optimize-seo"
+                            checked={watch("Optamize_for_platform_Seo") || false}
+                            onCheckedChange={(checked) => setValue("Optamize_for_platform_Seo", checked)}
+                            className="data-[state=checked]:bg-purple-600" />
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <Button
-                  onClick={handleSubmit(onSubmit)}
-                   className="w-full premium-button text-sm">
-                    Generate My Profiles
+                    type="button"
+                    onClick={handleSubmit(onSubmit)}
+                    className="w-full premium-button text-sm">
+                    {
+                      isLoading ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        "Generate My Profiles"
+                      )
+                    }
                     <ArrowRight className="ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </Button>
                 </CardContent>
@@ -728,6 +950,6 @@ export default function ProfileInputPage() {
           </div>
         </form>
       </div>
-    </DashboardLayout>
+    </>
   )
 }

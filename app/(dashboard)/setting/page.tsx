@@ -35,13 +35,12 @@ import {
   Palette,
   LinkIcon,
 } from "lucide-react"
-import DashboardLayout from "@/components/Dashboard-layout"
 
 export default function SettingsPage() {
   const [isDarkMode, setIsDarkMode] = useState(true)
 
   return (
-    <DashboardLayout>
+    <>
       <div className="p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2 premium-text">Settings</h1>
@@ -572,6 +571,6 @@ export default function SettingsPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </DashboardLayout>
+    </>
   )
 }

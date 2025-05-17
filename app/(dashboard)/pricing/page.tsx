@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Check, X, Sparkles, Zap, Shield, Clock, Users, BarChart3 } from "lucide-react"
-import DashboardLayout from "@/components/Dashboard-layout"
 import { faqs } from "@/constants/util"
 import { plan as plans } from "@/constants/util"
 
@@ -10,7 +9,7 @@ import { plan as plans } from "@/constants/util"
 
 export default function PricingPage() {
   return (
-    <DashboardLayout>
+    <>
       <div className="p-6">
         <div className="mb-8 text-center max-w-3xl mx-auto">
           <h1 className="text-3xl md:text-4xl font-bold mb-4 premium-text">Choose the Perfect Plan</h1>
@@ -279,6 +278,6 @@ export default function PricingPage() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    </>
   )
 }
