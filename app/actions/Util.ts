@@ -51,3 +51,17 @@ export default async function loadUser() {
     
     // Type definitions for form data
     export type FormSchema = z.infer<typeof formSchema>;
+
+export async function loadUserToken() {
+    const supabase = createClient()
+    const { data: { user }, error } = await supabase.auth.getUser()
+    if (error) {
+      console.error('Error loading user:', error)
+    }
+    
+    if (!user) {
+      return null
+    }
+    
+    return user;
+}

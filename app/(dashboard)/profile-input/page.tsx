@@ -35,9 +35,10 @@ import { skillOptions, languageOptions, fluencyLevels, serviceCategories } from 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { formSchema } from "@/app/actions/Util"
+import { FormSchema, formSchema, loadUserToken } from "@/app/actions/Util"
 import type { Database } from '@/lib/supabase/config'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { EntryData } from "@/constants/declear"
 
 export default function ProfileInputPage() {
 
@@ -91,6 +92,73 @@ export default function ProfileInputPage() {
     }
   });
   // console.log("Current form values:", watch());
+  // now I want that , the fetched data will be displayed on the input box and if they edit , it will be updated in the database
+  useEffect(() => {
+    const getUserData = async () => {
+      const userData = await loadUserToken();
+      const supabase = createClientComponentClient<Database>()
+      const { data, error } = await supabase.from('entries').select('*').eq('user_id', userData?.id) as { data: EntryData | null, error: any }
+      if (error) {
+        console.error('Error loading entries:', error)
+      }
+      const Data_current = data[data.length - 1]
+      if (Data_current) {
+        setValue("role", Data_current.role);
+        setValue("experienceLevel", Data_current.experience_level);
+        const expLevel = Data_current.experience_level || "";
+        setValue("experienceLevel", expLevel);
+        setExperienceLevel(expLevel.replace(" ", ""));
+        const yearsExp = typeof Data_current.years_experience === 'number'
+          ? Data_current.years_experience.toString()
+          : Data_current.years_experience || "";
+        setValue("yearsExperience", yearsExp);
+        setYearsExperience(parseInt(yearsExp));
+        console.log("Experience Level:", expLevel);
+        setValue("location", Data_current.location);
+        setValue("professional_summary", Data_current.professional_summary);
+        setSelectedSkills(Data_current.skills);
+        setServices(Data_current.services);
+        setHourlyRate([Data_current.hourly_rate]);
+        setWeeklyHours([Data_current.weekly_hours]);
+
+        if (Data_current.languages && Array.isArray(Data_current.languages)) {
+          const languagesWithFluency = Data_current.languages.map((lang: string) => ({
+            language: lang,
+            fluency: Data_current.fluencylevels?.[lang] || "Conversational"
+          }));
+          setSelectedLanguages(languagesWithFluency);
+        }
+
+        setValue("communication_style", Data_current.communication_style);
+        setValue("portfolio_url", Data_current.portfolio_url);
+
+        if (Array.isArray(Data_current.project) && Data_current.project.length > 0) {
+          // Set the project count
+          setNoofProject(Data_current.project.length - 1);
+
+          // Also make sure the form value is set correctly
+          setValue("project", Data_current.project);
+
+          // Loop through projects to set values in the form fields
+          Data_current.project.forEach((project: any, index: any) => {
+            setValue(`project.${index}.title`, project.title || '');
+            setValue(`project.${index}.description`, project.description || '');
+            setValue(`project.${index}.url`, project.url || '');
+          });
+        } else {
+          // Default to 0 projects if none exist
+          setNoofProject(0);
+        }
+        setValue("Prefferd_platform", Data_current.prefferd_platform);
+        setValue("work_preferences", Data_current.work_preferences);
+        setValue("generate_cover_letter", Data_current.generate_cover_letter);
+        setValue("generate_proposal_template", Data_current.generate_proposal_template);
+        setValue("Optamize_for_platform_Seo", Data_current.optamize_for_platform_seo);
+      }
+    }
+    getUserData();
+
+  }, [])
 
   useEffect(() => {
     setValue("skills", selectedSkills);
@@ -143,16 +211,16 @@ export default function ProfileInputPage() {
   }, [resumeFile, setValue]);
 
   // Add this near your other validation code
-useEffect(() => {
-  if (resumeFile) {
-    if (resumeFile.size > 5 * 1024 * 1024) {
-      alert("File size exceeds 5MB limit");
-      removeResume();
+  useEffect(() => {
+    if (resumeFile) {
+      if (resumeFile.size > 5 * 1024 * 1024) {
+        alert("File size exceeds 5MB limit");
+        removeResume();
+      }
     }
-  }
-}, [resumeFile]);
+  }, [resumeFile]);
 
-  
+
 
   // Handlers for form inputs
   const addSkill = () => {
@@ -219,15 +287,15 @@ useEffect(() => {
       const {
         data: { session },
       } = await supabase.auth.getSession()
-  
+
       const token = session?.access_token
       if (!token) {
         alert('You must be signed in.')
         return
       }
-  
+
       const { data: user } = await supabase.auth.getUser()
-  
+
       const insertPayload = {
         user_id: user?.user?.id,
         role: data.role,
@@ -251,13 +319,13 @@ useEffect(() => {
         generate_proposal_template: data.generate_proposal_template || false,
         optamize_for_platform_seo: data.Optamize_for_platform_Seo || false,
       }
-  
+
       const { error } = await supabase.from('entries').insert(insertPayload)
-  
+
       if (error) {
         throw error
       }
-  
+
       alert('Profile created successfully!')
     } catch (error) {
       console.error('Error submitting form:', error)
@@ -266,7 +334,7 @@ useEffect(() => {
       setIsLoading(false)
     }
   }
-  
+
 
   return (
     <>
@@ -278,8 +346,8 @@ useEffect(() => {
           </p>
         </div>
 
-        <form     
- className="space-y-4 sm:space-y-8">
+        <form
+          className="space-y-4 sm:space-y-8">
           <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
               {/* Professional Information */}
@@ -314,8 +382,9 @@ useEffect(() => {
                         Experience Level <span className="text-red-500">*</span>
                       </Label>
                       <Select
+                        defaultValue={ExperienceLevel ? ExperienceLevel : watch("experienceLevel")}
                         onValueChange={(value) => { setValue("experienceLevel", value) }}
-                        defaultValue={watch("experienceLevel")}
+
                         required>
                         <SelectTrigger className="premium-input text-sm">
                           <SelectValue placeholder={`Select your experience level ${errors.experienceLevel ? "(required)" : ""}`} />
@@ -336,8 +405,11 @@ useEffect(() => {
                         Years of Experience <span className="text-red-500">*</span>
                       </Label>
                       <Select
-                        onValueChange={(value) => { setValue("yearsExperience", value) }}
-                        defaultValue={watch("experienceLevel")}
+                        onValueChange={(value) => {
+                          setValue("yearsExperience", value);
+                          setYearsExperience(parseInt(value) || 0);
+                        }}
+                        defaultValue={yearsExperience ? yearsExperience.toString() : watch("yearsExperience")}
                         required>
                         <SelectTrigger className="premium-input text-sm">
                           <SelectValue
@@ -598,7 +670,9 @@ useEffect(() => {
 
                   <div className="space-y-2">
                     <Label className="text-sm">Number of Projects</Label>
-                    <Select onValueChange={(e) => handleAddProject(parseInt(e))}>
+                    <Select
+                      defaultValue={noofProject.toString() || "0"}
+                      onValueChange={(e) => handleAddProject(parseInt(e))}>
                       <SelectTrigger className="premium-input text-sm">
                         <SelectValue placeholder="Select number of projects" />
                       </SelectTrigger>
@@ -616,7 +690,7 @@ useEffect(() => {
                     <div className="mt-4">
                       <Label className="text-sm font-medium">Project Highlights</Label>
                       <div className="space-y-4 mt-2">
-                        {Array.from({ length: noofProject + 1 }).map((_, index) => (
+                        {Array.from({ length: noofProject}).map((_, index) => (
                           <div key={index} className="bg-slate-900/50 border border-slate-700 rounded-md p-3 sm:p-4 space-y-3 sm:space-y-4">
                             <div className="space-y-2">
                               <Input
